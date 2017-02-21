@@ -32,8 +32,8 @@ public class AutoTargetFollow {
 	
 	private Pipeline p;
 	
-	private double imageWidth = 640;
-	private double imageHeight = 480;
+	private double imageWidth = 320;
+	private double imageHeight = 240;
 	
 	private double centerX;
 	private double centerY;
@@ -44,7 +44,7 @@ public class AutoTargetFollow {
 	
 	public AutoTargetFollow() {
 		imgLock = new Object();
-		AxisCamera camera = CameraServer.getInstance().addAxisCamera("http://10.0.86.20/mjpg/video.mjpg");
+		AxisCamera camera = CameraServer.getInstance().addAxisCamera("10.0.86.20");
 		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
 	        if (!pipeline.filterContoursOutput().isEmpty()) {
 	            Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
