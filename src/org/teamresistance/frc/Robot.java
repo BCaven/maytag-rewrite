@@ -3,8 +3,11 @@ package org.teamresistance.frc;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
 
+import edu.wpi.cscore.AxisCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.vision.VisionThread;
 
 /**
  * Main robot class. Override methods from {@link IterativeRobot} to define behavior.
@@ -15,6 +18,7 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void robotInit() {
+    	
     	
     	IO.rightFrontMotor.setInverted(true);
         IO.rightRearMotor.setInverted(true);

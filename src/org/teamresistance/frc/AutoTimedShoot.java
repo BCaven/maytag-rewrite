@@ -1,23 +1,27 @@
 package org.teamresistance.frc;
 
+import java.util.ArrayList;
+
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
 import org.teamresistance.frc.util.Time;
+
 
 public class AutoTimedShoot {
 	
-	private double heading = 60;
 	private double speed = 1.0;
 	private int currentState = 0;
-	
+	 
 	private final double MAX_RUN_TIME_TO_HOPPER = 5.0;
 	private final double MAX_HOPPER_RAM_TIME = 0.5;
 	private final double MAX_DRIVE_TO_BALLS = 0.5;
 	private final double MAX_SIT_FOR_BALLS = 2.0;
 	private final double MAX_DRIVE_AWAY_FROM_HOPPER = 1.0;
 	
-	private double initialTime = Time.getTime();
-		
+	private double initialTime = Time.getTime();	
+	
 	public void init() {
-		
 	}
 	
 	public void update() {
@@ -78,5 +82,4 @@ public class AutoTimedShoot {
 			
 		}
 	}
-
 }
