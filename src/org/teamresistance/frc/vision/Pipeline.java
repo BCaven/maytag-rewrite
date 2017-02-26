@@ -51,16 +51,16 @@ public class Pipeline implements VisionPipeline{
 	public void process() {
 		//Step  Resize_Image0:
 		Mat resizeImageInput = source0;
-		double resizeImageWidth = 640;
-		double resizeImageHeight = 480;
+		double resizeImageWidth = 320;
+		double resizeImageHeight = 240;
 		int resizeImageInterpolation = Imgproc.INTER_LINEAR;
 		resizeImage(resizeImageInput, resizeImageWidth, resizeImageHeight, resizeImageInterpolation, resizeImageOutput);
 
 		//Step  HSL_Threshold0:
 		Mat hslThresholdInput = resizeImageOutput;
-		double[] hslThresholdHue = {36, 74};
-		double[] hslThresholdSaturation = {101, 255};
-		double[] hslThresholdLuminance = {17, 87};
+		double[] hslThresholdHue = {50, 160};
+		double[] hslThresholdSaturation = {0, 255};
+		double[] hslThresholdLuminance = {15, 87};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
 
 		//Step  Find_Contours0:
@@ -70,12 +70,12 @@ public class Pipeline implements VisionPipeline{
 
 		//Step  Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 0;
+		double filterContoursMinArea = 190;
 		double filterContoursMinPerimeter = 0;
 		double filterContoursMinWidth = 0;
-		double filterContoursMaxWidth = 20;
+		double filterContoursMaxWidth = 1000000;
 		double filterContoursMinHeight = 0;
-		double filterContoursMaxHeight = 100;
+		double filterContoursMaxHeight = 10000000;
 		double[] filterContoursSolidity = {0, 100};
 		double filterContoursMaxVertices = 1000000000.0;
 		double filterContoursMinVertices = 0;

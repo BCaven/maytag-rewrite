@@ -7,6 +7,8 @@ import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.teamresistance.frc.util.Time;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class AutoTimedShoot {
 	
@@ -21,25 +23,29 @@ public class AutoTimedShoot {
 	
 	private double initialTime = Time.getTime();	
 	
+	public boolean done = false;
+	
 	public void init() {
 	}
 	
 	public void update() {
 		double acceleration = Math.sqrt(
 					(Math.pow(IO.navX.getWorldLinearAccelX(),2) + Math.pow(IO.navX.getWorldLinearAccelY(), 2)));
+		SmartDashboard.putNumber("Acceleration", acceleration);
 		switch(currentState) {
 		case 0:
 			initialTime = Time.getTime();
 			currentState = 1;
 			break;
 		case 1:
-			if ((acceleration < 0.80) && (Time.getTime() - initialTime < MAX_RUN_TIME_TO_HOPPER)) {
+			if ((acceleration < 0.48) && (Time.getTime() - initialTime < MAX_RUN_TIME_TO_HOPPER)) {
 				double xSpeed = Math.sin(Math.toRadians(60)) * speed;
-				double ySpeed = Math.cos(Math.toRadians(60)) * speed;
+				double ySpeed = -Math.cos(Math.toRadians(60)) * speed;
 				IO.drive.drive(xSpeed, ySpeed, 0, 0);
 			} else {
+				done = true;
 				IO.drive.drive(0, 0, 0, 0);
-				currentState = 2;
+				//currentState = 2;
 				initialTime = Time.getTime();
 			}
 			break;

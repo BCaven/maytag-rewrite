@@ -18,12 +18,14 @@ public class Teleop {
   private Snorfler snorfler;
   private Gear gear;
   private AutoTargetFollow follower;
+  private AutoTimedShoot autoShoot;
   
   public void init() {
     shooter = new Shooter();
     climber = new Climber();
     snorfler = new Snorfler();
     gear = new Gear();
+    autoShoot = new AutoTimedShoot();
     shooter.init();
     climber.init();
     snorfler.init();
@@ -31,9 +33,13 @@ public class Teleop {
     IO.drive.setState(DriveType.STICK_FIELD);
     IO.drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
     follower = new AutoTargetFollow();
-    SmartDashboard.putNumber("Shoot P", 0.0); 
-    SmartDashboard.putNumber("Shoot D", 0.0);
+    //SmartDashboard.putNumber("Shoot P", fol); 
+    //SmartDashboard.putNumber("Shoot D", 0.0);
+    SmartDashboard.putNumber("Distance", 100);
+    SmartDashboard.putNumber("Distance P", 0.0071); 
+    SmartDashboard.putNumber("Distance D", 0.00325);
     follower.init(0.0, 0, 0);
+    follower.initDistance(100, 0, 0, 0);
   }
 
   public void update() {
@@ -49,10 +55,14 @@ public class Teleop {
     }
     if(JoystickIO.leftJoystick.getRawButton(2)) {
     	follower.init(SmartDashboard.getNumber("Shoot P", 0.0), 0.0, SmartDashboard.getNumber("Shoot D", 0.0));
+    	follower.initDistance(SmartDashboard.getNumber("Distance", 100.0), SmartDashboard.getNumber("Distance P", 0.0), 0.0, SmartDashboard.getNumber("Distance D", 0.0));
     }
+   
     
     if(JoystickIO.leftJoystick.getRawButton(1)) {
     	follower.update();
+    }else if(JoystickIO.leftJoystick.getRawButton(3)) {
+    	autoShoot.update();
     } else {
 	    IO.drive.drive(JoystickIO.leftJoystick.getX(),
 	        JoystickIO.leftJoystick.getY(),

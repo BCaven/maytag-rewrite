@@ -13,7 +13,7 @@ public class Shooter {
 
   public void update() {
     if (JoystickIO.btnShooter.isDown()) {
-      IO.shooterMotor.set(0.85);
+      IO.shooterMotor.set(0.80);
       IO.feederMotor.set(1.0);
       if(JoystickIO.btnAgitator.isDown()) {
         IO.agitatorMotor.set(0.3);
