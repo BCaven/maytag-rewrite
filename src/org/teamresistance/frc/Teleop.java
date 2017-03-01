@@ -44,6 +44,7 @@ public class Teleop {
 
   public void update() {
     shooter.update();
+    /* TODO: REMOVE THESE COMMENTS
     climber.update();
     snorfler.update();
     gear.update();
@@ -57,7 +58,6 @@ public class Teleop {
     	follower.init(SmartDashboard.getNumber("Shoot P", 0.0), 0.0, SmartDashboard.getNumber("Shoot D", 0.0));
     	follower.initDistance(SmartDashboard.getNumber("Distance", 100.0), SmartDashboard.getNumber("Distance P", 0.0), 0.0, SmartDashboard.getNumber("Distance D", 0.0));
     }
-   
     
     if(JoystickIO.leftJoystick.getRawButton(1)) {
     	follower.update();
@@ -69,5 +69,6 @@ public class Teleop {
 	        JoystickIO.rightJoystick.getX(),
 	        JoystickIO.codriverBox.getRotation());
     }
+    */
   }
 }

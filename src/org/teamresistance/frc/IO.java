@@ -2,7 +2,9 @@ package org.teamresistance.frc;
 
 import org.teamresistance.frc.util.MecanumDrive;
 
+import com.ctre.CANTalon;
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.*;
 
 /**
@@ -14,7 +16,8 @@ public class IO {
   public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
   // Motors -- shooting
-  public static VictorSP shooterMotor = new VictorSP(4);
+  public static CANTalon shooterMotor = new CANTalon(3);
+  
   public static VictorSP feederMotor = new VictorSP(2);
   public static VictorSP agitatorMotor = new VictorSP(6);
 
@@ -47,12 +50,18 @@ public class IO {
 
   // NavX-MXP navigation sensor
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
-
-  public static PowerDistributionPanel powerPanel = new PowerDistributionPanel(0);
   
   public static MecanumDrive drive = new MecanumDrive(
 		  new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor),
 	      IO.navX);
 
-
+  public static void init() {
+	  IO.rightFrontMotor.setInverted(true);
+      IO.rightRearMotor.setInverted(true);
+      
+      IO.snorflerMotor.setInverted(true);
+      IO.climberMotor.setInverted(true);
+      
+      IO.feederMotor.setInverted(true);
+  }
 }

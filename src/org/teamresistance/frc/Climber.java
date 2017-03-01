@@ -17,7 +17,7 @@ public class Climber {
   }
 
   public void update() {
-    double current = IO.powerPanel.getCurrent(8);
+    double current = IO.pdp.getCurrent(8);
     double timeDuration = 0.1;
     double spikeLimit = 70;
     double currTime = Time.getTime();
