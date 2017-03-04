@@ -42,6 +42,5 @@ public class JoystickIO {
     Button newButton = new Button(stick, button);
     buttons.add(newButton);
     return newButton;
-
   }
 }

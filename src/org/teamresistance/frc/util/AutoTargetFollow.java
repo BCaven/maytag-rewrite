@@ -6,7 +6,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.teamresistance.frc.IO;
-import org.teamresistance.frc.vision.Pipeline;
+import org.teamresistance.frc.vision.ShooterPipeline;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -42,7 +42,7 @@ public class AutoTargetFollow {
 	private double maxOutputDistance = 0.5;
 	private double minOutputDistance = -0.5;
 
-	private Pipeline p;
+	private ShooterPipeline p;
 	
 	private double imageWidth = 320;
 	private double imageHeight = 240;
@@ -56,19 +56,11 @@ public class AutoTargetFollow {
 	
 	private double toleranceDistance = 0.1;
 	
+	private AxisCamera camera;
+	
 	public AutoTargetFollow() {
 		imgLock = new Object();
-		AxisCamera camera = CameraServer.getInstance().addAxisCamera("10.0.86.20");
-		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
-	        if (!pipeline.filterContoursOutput().isEmpty()) {
-	            Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-	            synchronized (imgLock) {
-	                centerX = r.x + (r.width / 2);
-	                centerY = r.y + (r.height / 2);
-	            }
-	        }
-	    });
-		visionThread.start();
+		camera = CameraServer.getInstance().addAxisCamera("10.0.86.20");
 	}
 	
 	public void init(double p, double i, double d) {
@@ -87,6 +79,24 @@ public class AutoTargetFollow {
 		this.prevErrorDistance = 0.0;
 		this.integralDistance = 0.0;
 	}	
+	
+	public void start() {
+		visionThread = new VisionThread(camera, new ShooterPipeline(), pipeline -> {
+	        if (!pipeline.filterContoursOutput().isEmpty()) {
+	            Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+	            synchronized (imgLock) {
+	                centerX = r.x + (r.width / 2);
+	                centerY = r.y + (r.height / 2);
+	            }
+	        }
+	    });
+		visionThread.start();
+	}
+	
+	public void stop() {
+		visionThread.interrupt();
+		visionThread = null;
+	}
 	
 	public void update() {
 		double error;

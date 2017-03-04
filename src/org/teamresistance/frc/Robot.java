@@ -12,18 +12,21 @@ import edu.wpi.first.wpilibj.Relay;
 public class Robot extends IterativeRobot {
 
   public Teleop teleop;
+  public Vision vision;
 
     @Override
     public void robotInit() {
     	IO.init();
+        teleop = new Teleop();
+        teleop.init();
+        
+        vision = new Vision();
+    	vision.init();
     }
 
     @Override
     public void teleopInit() {
-      teleop = new Teleop();
-      teleop.init();
     }
-
 
     @Override
     public void teleopPeriodic() {
@@ -31,6 +34,11 @@ public class Robot extends IterativeRobot {
       Time.update();
       JoystickIO.update();
       teleop.update();
+      vision.update();
     }
-
+    
+    @Override
+    public void disabledInit() {
+//    	teleop.disable();
+    }
 }

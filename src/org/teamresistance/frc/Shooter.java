@@ -31,32 +31,29 @@ public class Shooter {
 		double motorOutput = IO.shooterMotor.getOutputVoltage() / IO.shooterMotor.getBusVoltage();
 		SmartDashboard.putNumber("Talon Motor Output", motorOutput);
 		
-		if(JoystickIO.leftJoystick.getRawButton(1)) {
+		if(JoystickIO.btnShooter.isDown()) {
+			//IO.feederMotor.set(1.0);
 			IO.shooterMotor.changeControlMode(TalonControlMode.Speed);
 			IO.shooterMotor.set(4000);
-			
+			/*
+			if (JoystickIO.btnAgitator.isDown()) {
+				IO.agitatorMotor.set(0.3);
+				IO.shakerMotor.set(0.6);
+			} else {
+				IO.agitatorMotor.set(0.0);
+				IO.shakerMotor.set(0.0);
+			}
+			*/
 			SmartDashboard.putNumber("Talon Error", IO.shooterMotor.getClosedLoopError());
 		} else {
 			IO.shooterMotor.changeControlMode(TalonControlMode.PercentVbus);
 			IO.shooterMotor.set(0.0);
+			IO.feederMotor.set(0.0);
+			IO.agitatorMotor.set(0.0);
+			IO.shakerMotor.set(0.0);
 		}
 		
-		
 		SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());
-		
-//		if (JoystickIO.btnShooter.isDown()) {
-//			IO.shooterMotor.set(0.80);
-//			IO.feederMotor.set(1.0);
-//			if (JoystickIO.btnAgitator.isDown()) {
-//				IO.agitatorMotor.set(0.3);
-//			} else {
-//				IO.agitatorMotor.set(0.0);
-//			}
-//		} else {
-//			IO.shooterMotor.set(0.0);
-//			IO.agitatorMotor.set(0.0);
-//			IO.feederMotor.set(0.0);
-//		}
 	}
 
 }

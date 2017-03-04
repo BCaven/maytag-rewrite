@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.vision.VisionPipeline;
 *
 * @author GRIP
 */
-public class Pipeline implements VisionPipeline{
+public class ShooterPipeline implements VisionPipeline {
 
 	//Outputs
 	private Mat resizeImageOutput = new Mat();
@@ -42,7 +42,7 @@ public class Pipeline implements VisionPipeline{
 	/**
 	 * This constructor sets up the pipeline
 	 */
-	public Pipeline() {
+	public ShooterPipeline() {
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Pipeline implements VisionPipeline{
 
 		//Step  Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 190;
+		double filterContoursMinArea = 0;
 		double filterContoursMinPerimeter = 0;
 		double filterContoursMinWidth = 0;
 		double filterContoursMaxWidth = 1000000;
@@ -229,6 +229,5 @@ public class Pipeline implements VisionPipeline{
 	public void process(Mat image) {
 		setsource0(image);
 		process();
-		
 	}
 }
