@@ -1,5 +1,6 @@
 package org.teamresistance.frc;
 
+import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
 

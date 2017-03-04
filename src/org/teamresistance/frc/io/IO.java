@@ -1,4 +1,4 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.io;
 
 import org.teamresistance.frc.util.MecanumDrive;
 
@@ -59,15 +59,13 @@ public class IO {
   // NavX-MXP navigation sensor
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
   
-  public static MecanumDrive drive = new MecanumDrive(
-		  new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor), IO.navX);
+  public static MecanumDrive drive = new MecanumDrive(new RobotDrive(IO.leftFrontMotor, IO.leftRearMotor, IO.rightFrontMotor, IO.rightRearMotor), IO.navX);
 
   public static UsbCamera gearCamera = CameraServer.getInstance().startAutomaticCapture(0);
   
-  public static OpticalFlow opticalFlow = new OpticalFlow();
+  public static OFS ofs = new OFS();
   
   public static void init() {
-	  
 	  IO.rightFrontMotor.setInverted(true);
       IO.rightRearMotor.setInverted(true);
       

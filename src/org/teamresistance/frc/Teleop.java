@@ -1,11 +1,10 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.util.AutoTargetFollow;
 import org.teamresistance.frc.util.JoystickIO;
-import org.teamresistance.frc.util.MecanumDrive;
 import org.teamresistance.frc.util.MecanumDrive.DriveType;
 
 /**
@@ -13,25 +12,22 @@ import org.teamresistance.frc.util.MecanumDrive.DriveType;
  */
 public class Teleop {
 
-  private Shooter shooter;
   private Climber climber;
   private Gear gear;
-  private AutoTargetFollow follower;
-  private AutoTimedShoot autoShoot;
   private AutoGearPlacer autoGearPlacer;
   
   public void init() {
-    shooter = new Shooter();
     climber = new Climber();
     gear = new Gear();
-    autoShoot = new AutoTimedShoot();
     autoGearPlacer = new AutoGearPlacer();
-    shooter.init();
     climber.init();
     gear.init();
     IO.drive.setState(DriveType.STICK_FIELD);
-    IO.drive.init(IO.navX.getAngle(), 0.03, 0.0, 0.06);
-    follower = new AutoTargetFollow();
+    IO.drive.init(IO.navX.getAngle(), 0.08, 0.0, 0.0);
+    SmartDashboard.putNumber("Drive P", IO.drive.getkP());
+    SmartDashboard.putNumber("Drive I", IO.drive.getkI());
+    SmartDashboard.putNumber("Drive D", IO.drive.getkD());
+    
     //SmartDashboard.putNumber("Shoot P", fol); 
     //SmartDashboard.putNumber("Shoot D", 0.0);
     SmartDashboard.putNumber("Distance", 100);
@@ -46,8 +42,6 @@ public class Teleop {
     SmartDashboard.putNumber("Gear Distance D", 0.00325);
     
     SmartDashboard.putNumber("Gear FeedForward", 0.0);
-    follower.init(0.0, 0, 0);
-    follower.initDistance(100, 0, 0, 0);
     
     autoGearPlacer.start();
     
@@ -56,7 +50,13 @@ public class Teleop {
   }
   
   public void update() {	  
-    shooter.update();
+    Robot.shooter.update(JoystickIO.btnShooter.isDown(), JoystickIO.btnAgitator.isDown());
+    IO.ofs.update();
+    
+    SmartDashboard.putNumber("OFS X", IO.ofs.getX());
+    SmartDashboard.putNumber("OFS Y", IO.ofs.getY());
+    SmartDashboard.putNumber("OFS Magnitude", IO.ofs.getPos().length());
+    
     /* TODO: REMOVE THESE COMMENTS
     climber.update();
     gear.update();
@@ -64,8 +64,9 @@ public class Teleop {
      */
     // Allow for changing drive controls
     if(JoystickIO.btnChangeDrive.onButtonPressed()) {
-      IO.drive.init(IO.navX.getAngle(), IO.drive.getkP(), IO.drive.getkI(), IO.drive.getkD());
-      IO.drive.nextState();
+      //IO.drive.init(IO.navX.getAngle(), IO.drive.getkP(), IO.drive.getkI(), IO.drive.getkD());
+    	IO.drive.init(IO.navX.getAngle(), SmartDashboard.getNumber("Drive P", IO.drive.getkP()), SmartDashboard.getNumber("Drive I", IO.drive.getkI()), SmartDashboard.getNumber("Drive D", IO.drive.getkD()));
+    	//IO.drive.nextState();
     }
     
     if(JoystickIO.leftJoystick.getRawButton(2)) {
@@ -87,12 +88,6 @@ public class Teleop {
     if(JoystickIO.leftJoystick.getRawButton(4)) {
     	IO.drive.setState(DriveType.KNOB_FIELD);
     	autoGearPlacer.update();
-    } else if(JoystickIO.leftJoystick.getRawButton(1)) {
-    	IO.drive.setState(DriveType.KNOB_FIELD);
-    	follower.update();
-    }else if(JoystickIO.leftJoystick.getRawButton(3)) {
-    	IO.drive.setState(DriveType.KNOB_FIELD);
-    	autoShoot.update();
     } else {
     	IO.drive.setState(DriveType.STICK_FIELD);
 	    IO.drive.drive(JoystickIO.leftJoystick.getX(),

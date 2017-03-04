@@ -1,5 +1,7 @@
 package org.teamresistance.frc;
 
+import org.teamresistance.frc.io.IO;
+
 public class Vision {
 
 	// All 0's here are good for OpenCV detection

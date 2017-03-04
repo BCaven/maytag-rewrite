@@ -1,5 +1,6 @@
 package org.teamresistance.frc;
 
+import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.util.JoystickIO;
 
 import com.ctre.CANTalon.FeedbackDevice;
@@ -27,23 +28,23 @@ public class Shooter {
 		//IO.shooterMotor.setVoltageRampRate(24.0);
 	}
 
-	public void update() {
+	public void update(boolean shooter, boolean agitator) {
 		double motorOutput = IO.shooterMotor.getOutputVoltage() / IO.shooterMotor.getBusVoltage();
 		SmartDashboard.putNumber("Talon Motor Output", motorOutput);
 		
-		if(JoystickIO.btnShooter.isDown()) {
+		if(shooter) {
 			//IO.feederMotor.set(1.0);
 			IO.shooterMotor.changeControlMode(TalonControlMode.Speed);
 			IO.shooterMotor.set(4000);
-			/*
-			if (JoystickIO.btnAgitator.isDown()) {
+			
+			if (agitator) {
 				IO.agitatorMotor.set(0.3);
 				IO.shakerMotor.set(0.6);
 			} else {
 				IO.agitatorMotor.set(0.0);
 				IO.shakerMotor.set(0.0);
 			}
-			*/
+			
 			SmartDashboard.putNumber("Talon Error", IO.shooterMotor.getClosedLoopError());
 		} else {
 			IO.shooterMotor.changeControlMode(TalonControlMode.PercentVbus);
@@ -55,5 +56,4 @@ public class Shooter {
 		
 		SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());
 	}
-
 }

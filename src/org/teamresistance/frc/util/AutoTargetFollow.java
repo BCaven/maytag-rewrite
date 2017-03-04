@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
-import org.teamresistance.frc.IO;
+import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.vision.ShooterPipeline;
 
 import edu.wpi.cscore.AxisCamera;
@@ -98,7 +98,8 @@ public class AutoTargetFollow {
 		visionThread = null;
 	}
 	
-	public void update() {
+	public boolean update() {
+		boolean done = true;
 		double error;
 		double errorDistance;
 		synchronized (imgLock) {
@@ -113,21 +114,31 @@ public class AutoTargetFollow {
 		long curTime = System.currentTimeMillis(); 
 		double deltaTime = (curTime - prevTime) / 1000.0;
 		
-		if(onTargetRotation(error)) error = 0.0;
-		integral += error;		
+		if(onTargetRotation(error)) {
+			error = 0.0;
+		} else {
+			done = false;
+		}
+		integral += error;
 		double result = (error * kP) + (integral * kI * deltaTime) + ((error - prevError) * kD / deltaTime);
 		prevError = error;
 		if(result > maxOutput) result = maxOutput;
 		else if(result < minOutput) result = minOutput;
 		
-		if(onTargetDistance(error)) errorDistance = 0.0;
+		if(onTargetDistance(error)) {
+			errorDistance = 0.0;
+		} else {
+			done = false;
+		}
 		integral += errorDistance;		
 		double resultDistance = (errorDistance * kPDistance) + (integral * kIDistance * deltaTime) + ((errorDistance - prevErrorDistance) * kDDistance / deltaTime);
 		prevErrorDistance = errorDistance;
 		if(resultDistance > maxOutputDistance) resultDistance = maxOutputDistance;
 		else if(resultDistance < minOutputDistance) resultDistance = minOutputDistance;
 		
-		IO.drive.getDrive().mecanumDrive_Cartesian(JoystickIO.leftJoystick.getX(), resultDistance, result, 0);
+		IO.drive.getDrive().mecanumDrive_Cartesian(0, resultDistance, result, 0);
+		
+		return done;
 	}
 	
 	// If the error is less than or equal to the tolerance it is on target

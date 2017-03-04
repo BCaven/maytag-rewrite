@@ -2,6 +2,7 @@ package org.teamresistance.frc;
 
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
+import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.mathd.Vector2d;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
@@ -36,8 +37,8 @@ public class AutoGearPlacer {
 	private double tolerance = 0.1; // The percent tolerance for the error to be
 									// considered on target
 
-	private double maxOutput = 0.6;
-	private double minOutput = -0.6;
+	private double maxOutput = 1.0;
+	private double minOutput = -1.0;
 
 	private double maxOutputDistance = 0.5;
 	private double minOutputDistance = -0.5;
@@ -187,7 +188,7 @@ public class AutoGearPlacer {
 		if (onTargetDistance(error))
 			errorDistance = 0.0;
 		integral += errorDistance * deltaTime;
-		double resultDistance = (errorDistance * kPDistance) + (integral * kIDistance) + ((errorDistance - prevErrorDistance) * kDDistance / deltaTime);
+		double resultDistance = (errorDistance * kPDistance) + (integralDistance * kIDistance) + ((errorDistance - prevErrorDistance) * kDDistance / deltaTime);
 		prevErrorDistance = errorDistance;
 		if (resultDistance > maxOutputDistance)
 			resultDistance = maxOutputDistance;

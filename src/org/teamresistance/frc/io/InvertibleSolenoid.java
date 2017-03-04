@@ -1,4 +1,4 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.io;
 
 import edu.wpi.first.wpilibj.Solenoid;
 

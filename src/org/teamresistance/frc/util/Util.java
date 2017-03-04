@@ -2,8 +2,7 @@ package org.teamresistance.frc.util;
 
 public class Util {
 
-	public static double span(double input, double inLo, double inHi,
-			double outLo, double outHi) {
+	public static double span(double input, double inLo, double inHi, double outLo, double outHi) {
 		if (input < inLo) {
 			return outLo;
 		} else if (input > inHi) {

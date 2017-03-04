@@ -8,7 +8,7 @@ public class MecanumDrive {
 	private AHRS gyro;
 	
 	// PID constants
-	private double kP; // Proportional constant
+	private double kP = 0.0; // Proportional constant
 	private double kI = 0.0; // Integral constant
 	private double kD = 0.0; // Derivative constant
 	
@@ -52,15 +52,17 @@ public class MecanumDrive {
 	public void drive(double x, double y, double rotation, double angle) {
 		long curTime = System.currentTimeMillis(); 
 		double deltaTime = (curTime - prevTime) / 1000.0;
-		
+		double currentAngle = gyro.getAngle();
 		switch(driveState) {
 		case KNOB_FIELD:
-			double error = angle - gyro.getAngle();
+			double error = angle - currentAngle;
+			/*
 			if(!rotationLatch && Math.abs(error) > rotationLatchDeadband) {
 				error = 0;
 			} else if(!rotationLatch && Math.abs(error) <= rotationLatchDeadband) {
 				rotationLatch = true;
 			}
+			*/
 			if(Math.abs(error) >= 300) {
 				if(error > 0) {
 					error -= 360;
@@ -78,10 +80,10 @@ public class MecanumDrive {
 			if(result > maxOutput) result = maxOutput;
 			else if(result < minOutput) result = minOutput;
 			
-			drive.mecanumDrive_Cartesian(x, y, result, gyro.getAngle());
+			drive.mecanumDrive_Cartesian(x, y, result, currentAngle);
 			break;
 		case STICK_FIELD:
-			drive.mecanumDrive_Cartesian(x, y, rotation, gyro.getAngle());
+			drive.mecanumDrive_Cartesian(x, y, rotation, currentAngle);
 			break;
 		}
 	}
