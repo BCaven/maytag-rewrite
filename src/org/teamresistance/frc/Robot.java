@@ -17,11 +17,18 @@ public class Robot extends IterativeRobot {
     @Override
     public void robotInit() {
     	IO.init();
+    	IO.opticalFlow.init();
+    	
         teleop = new Teleop();
         teleop.init();
         
         vision = new Vision();
     	vision.init();
+    }
+    
+    @Override
+    public void robotPeriodic() {
+        IO.opticalFlow.update();
     }
 
     @Override

@@ -64,6 +64,8 @@ public class IO {
 
   public static UsbCamera gearCamera = CameraServer.getInstance().startAutomaticCapture(0);
   
+  public static OpticalFlow opticalFlow = new OpticalFlow();
+  
   public static void init() {
 	  
 	  IO.rightFrontMotor.setInverted(true);
