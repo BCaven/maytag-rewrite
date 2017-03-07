@@ -23,8 +23,7 @@ public class IO {
   public static VictorSP agitatorMotor = new VictorSP(6);
 
   // Motors -- other
-  
-  public static VictorSP shakerMotor = new VictorSP(/*0*/4);
+  public static VictorSP vibratorMotor = new VictorSP(/*0*/4);
   public static VictorSP gearRotatorMotor = new VictorSP(5);
   public static VictorSP climberMotor = new VictorSP(9);
 

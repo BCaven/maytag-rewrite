@@ -1,8 +1,5 @@
 package org.teamresistance.frc.util;
 
-import java.util.ArrayList;
-
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.teamresistance.frc.io.IO;
@@ -60,7 +57,7 @@ public class AutoTargetFollow {
 	
 	public AutoTargetFollow() {
 		imgLock = new Object();
-		camera = CameraServer.getInstance().addAxisCamera("10.0.86.20");
+		camera = CameraServer.getInstance().addAxisCamera("10.0.86.128");
 	}
 	
 	public void init(double p, double i, double d) {
@@ -88,6 +85,9 @@ public class AutoTargetFollow {
 	                centerX = r.x + (r.width / 2);
 	                centerY = r.y + (r.height / 2);
 	            }
+	        } else {
+	        	centerX = Double.POSITIVE_INFINITY;
+                centerY = Double.POSITIVE_INFINITY;
 	        }
 	    });
 		visionThread.start();
@@ -103,8 +103,18 @@ public class AutoTargetFollow {
 		double error;
 		double errorDistance;
 		synchronized (imgLock) {
-			error = imageHeight/2.0 - centerY;
-			errorDistance = distanceSetpoint - centerX;
+			if(Double.isFinite(centerY)) {
+				error = imageHeight/2.0 - centerY;
+			} else {
+				error = 0;
+			}
+			
+			if(Double.isFinite(centerX)) {
+				errorDistance = distanceSetpoint - centerX;
+			} else {
+				errorDistance = 0;
+			}
+			
 			SmartDashboard.putNumber("Center Y AutoTargetFollow", centerY);
 			SmartDashboard.putNumber("Center X AutoTargetFollow", centerX);
 			SmartDashboard.putNumber("Error AutoTargetFollow", error);
@@ -125,7 +135,7 @@ public class AutoTargetFollow {
 		if(result > maxOutput) result = maxOutput;
 		else if(result < minOutput) result = minOutput;
 		
-		if(onTargetDistance(error)) {
+		if(onTargetDistance(errorDistance)) {
 			errorDistance = 0.0;
 		} else {
 			done = false;

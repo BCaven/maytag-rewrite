@@ -9,7 +9,7 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Created by shrey on 2/20/2017.
+ * Created by shreya on 2/20/2017.
  */
 public class Shooter {
 
@@ -39,10 +39,10 @@ public class Shooter {
 			
 			if (agitator) {
 				IO.agitatorMotor.set(0.3);
-				IO.shakerMotor.set(0.6);
+				IO.vibratorMotor.set(0.6);
 			} else {
 				IO.agitatorMotor.set(0.0);
-				IO.shakerMotor.set(0.0);
+				IO.vibratorMotor.set(0.0);
 			}
 			
 			SmartDashboard.putNumber("Talon Error", IO.shooterMotor.getClosedLoopError());
@@ -51,7 +51,7 @@ public class Shooter {
 			IO.shooterMotor.set(0.0);
 			IO.feederMotor.set(0.0);
 			IO.agitatorMotor.set(0.0);
-			IO.shakerMotor.set(0.0);
+			IO.vibratorMotor.set(0.0);
 		}
 		
 		SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());

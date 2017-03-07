@@ -3,12 +3,11 @@ package org.teamresistance.frc;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.teamresistance.frc.io.IO;
-import org.teamresistance.frc.util.AutoTargetFollow;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.MecanumDrive.DriveType;
 
 /**
- * Created by shrey on 2/20/2017.
+ * Created by shreya on 2/20/2017.
  */
 public class Teleop {
 
@@ -23,25 +22,23 @@ public class Teleop {
     climber.init();
     gear.init();
     IO.drive.setState(DriveType.STICK_FIELD);
-    IO.drive.init(IO.navX.getAngle(), 0.08, 0.0, 0.0);
-    SmartDashboard.putNumber("Drive P", IO.drive.getkP());
-    SmartDashboard.putNumber("Drive I", IO.drive.getkI());
-    SmartDashboard.putNumber("Drive D", IO.drive.getkD());
+    IO.drive.init(IO.navX.getAngle(), 0.06, 0.0, 0.0);
+//    SmartDashboard.putNumber("Drive P", IO.drive.getkP());
+//    SmartDashboard.putNumber("Drive I", IO.drive.getkI());
+//    SmartDashboard.putNumber("Drive D", IO.drive.getkD());
     
-    //SmartDashboard.putNumber("Shoot P", fol); 
-    //SmartDashboard.putNumber("Shoot D", 0.0);
-    SmartDashboard.putNumber("Distance", 100);
-    SmartDashboard.putNumber("Distance P", 0.0071); 
-    SmartDashboard.putNumber("Distance D", 0.00325);
+//    SmartDashboard.putNumber("Distance", 100);
+//    SmartDashboard.putNumber("Distance P", 0.0071); 
+//    SmartDashboard.putNumber("Distance D", 0.00325);
     
-    SmartDashboard.putNumber("Gear P", 0.0); 
-    SmartDashboard.putNumber("Gear I", 0.0); 
-    SmartDashboard.putNumber("Gear D", 0.0);
-    SmartDashboard.putNumber("Gear Distance", 100);
-    SmartDashboard.putNumber("Gear Distance P", 0.0071); 
-    SmartDashboard.putNumber("Gear Distance D", 0.00325);
+//    SmartDashboard.putNumber("Gear P", 0.0); 
+//    SmartDashboard.putNumber("Gear I", 0.0); 
+//    SmartDashboard.putNumber("Gear D", 0.0);
+//    SmartDashboard.putNumber("Gear Distance", 100);
+//    SmartDashboard.putNumber("Gear Distance P", 0.0071); 
+//    SmartDashboard.putNumber("Gear Distance D", 0.00325);
     
-    SmartDashboard.putNumber("Gear FeedForward", 0.0);
+//    SmartDashboard.putNumber("Gear FeedForward", 0.0);
     
     autoGearPlacer.start();
     
@@ -60,8 +57,12 @@ public class Teleop {
     /* TODO: REMOVE THESE COMMENTS
     climber.update();
     gear.update();
-
      */
+    
+    if(JoystickIO.btnGyroReset.onButtonPressed()) {
+    	IO.navX.reset();
+    }
+    
     // Allow for changing drive controls
     if(JoystickIO.btnChangeDrive.onButtonPressed()) {
       //IO.drive.init(IO.navX.getAngle(), IO.drive.getkP(), IO.drive.getkI(), IO.drive.getkD());

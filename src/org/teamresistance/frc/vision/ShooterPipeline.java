@@ -13,6 +13,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.teamresistance.frc.vision.GearPipeline.BlurType;
 
 import edu.wpi.first.wpilibj.vision.VisionPipeline;
 
@@ -29,6 +30,7 @@ public class ShooterPipeline implements VisionPipeline {
 
 	//Outputs
 	private Mat resizeImageOutput = new Mat();
+	private Mat blurOutput = new Mat();
 	private Mat hslThresholdOutput = new Mat();
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
@@ -56,11 +58,17 @@ public class ShooterPipeline implements VisionPipeline {
 		int resizeImageInterpolation = Imgproc.INTER_LINEAR;
 		resizeImage(resizeImageInput, resizeImageWidth, resizeImageHeight, resizeImageInterpolation, resizeImageOutput);
 
+		// Step Blur0:
+		Mat blurInput = resizeImageOutput;
+		BlurType blurType = BlurType.get("Gaussian Blur");
+		double blurRadius = 6;
+		blur(blurInput, blurType, blurRadius, blurOutput);
+		
 		//Step  HSL_Threshold0:
-		Mat hslThresholdInput = resizeImageOutput;
-		double[] hslThresholdHue = {50, 160};
-		double[] hslThresholdSaturation = {0, 255};
-		double[] hslThresholdLuminance = {15, 87};
+		Mat hslThresholdInput = blurOutput;
+		double[] hslThresholdHue = {66, 89};
+		double[] hslThresholdSaturation = {156, 255};
+		double[] hslThresholdLuminance = {23, 90};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
 
 		//Step  Find_Contours0:
@@ -154,6 +162,71 @@ public class ShooterPipeline implements VisionPipeline {
 			new Scalar(hue[1], lum[1], sat[1]), out);
 	}
 
+	/**
+	 * An indication of which type of filter to use for a blur.
+	 * Choices are BOX, GAUSSIAN, MEDIAN, and BILATERAL
+	 */
+	enum BlurType{
+		BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"),
+			BILATERAL("Bilateral Filter");
+
+		private final String label;
+
+		BlurType(String label) {
+			this.label = label;
+		}
+
+		public static BlurType get(String type) {
+			if (BILATERAL.label.equals(type)) {
+				return BILATERAL;
+			}
+			else if (GAUSSIAN.label.equals(type)) {
+			return GAUSSIAN;
+			}
+			else if (MEDIAN.label.equals(type)) {
+				return MEDIAN;
+			}
+			else {
+				return BOX;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return this.label;
+		}
+	}
+
+	/**
+	 * Softens an image using one of several filters.
+	 * @param input The image on which to perform the blur.
+	 * @param type The blurType to perform.
+	 * @param doubleRadius The radius for the blur.
+	 * @param output The image in which to store the output.
+	 */
+	private void blur(Mat input, BlurType type, double doubleRadius,
+		Mat output) {
+		int radius = (int)(doubleRadius + 0.5);
+		int kernelSize;
+		switch(type){
+			case BOX:
+				kernelSize = 2 * radius + 1;
+				Imgproc.blur(input, output, new Size(kernelSize, kernelSize));
+				break;
+			case GAUSSIAN:
+				kernelSize = 6 * radius + 1;
+				Imgproc.GaussianBlur(input,output, new Size(kernelSize, kernelSize), radius);
+				break;
+			case MEDIAN:
+				kernelSize = 2 * radius + 1;
+				Imgproc.medianBlur(input, output, kernelSize);
+				break;
+			case BILATERAL:
+				Imgproc.bilateralFilter(input, output, -1, radius, radius);
+				break;
+		}
+	}
+	
 	/**
 	 * Sets the values of pixels in a binary image to their distance to the nearest black pixel.
 	 * @param input The image on which to perform the Distance Transform.

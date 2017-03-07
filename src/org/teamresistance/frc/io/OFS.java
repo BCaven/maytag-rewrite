@@ -62,11 +62,11 @@ public class OFS {
   }
 
   public void update() {
-    SmartDashboard.putNumber("Product ID", readRegister((byte) 0));
-    SmartDashboard.putNumber("Squall:", readRegister((byte) 5));
+//    SmartDashboard.putNumber("Product ID", readRegister((byte) 0));
+//    SmartDashboard.putNumber("Squall:", readRegister((byte) 5));
 
     int motionRegister = readRegister((byte) 2);
-    SmartDashboard.putNumber("Motion Register:", motionRegister);
+//    SmartDashboard.putNumber("Motion Register:", motionRegister);
 
     //Refresh raw values after register
     raw_dx = 0;
@@ -97,12 +97,12 @@ public class OFS {
     yLinear += raw_dy;
 
     //Ensure that im getting values
-    SmartDashboard.putNumber("Raw X", raw_dx);
-    SmartDashboard.putNumber("Raw Y", raw_dy);
+//    SmartDashboard.putNumber("Raw X", raw_dx);
+//    SmartDashboard.putNumber("Raw Y", raw_dy);
 
     //Ensure that im getting values Linear
-    SmartDashboard.putNumber("Actual X (Linear)", xLinear);
-    SmartDashboard.putNumber("Actual Y (Linear)", yLinear);
+//    SmartDashboard.putNumber("Actual X (Linear)", xLinear);
+//    SmartDashboard.putNumber("Actual Y (Linear)", yLinear);
   }
 
   private int readRegister(byte register) {

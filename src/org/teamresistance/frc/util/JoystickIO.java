@@ -19,18 +19,20 @@ public class JoystickIO {
 
   //Buttons
   private static ArrayList<Button> buttons = new ArrayList<>();
+  
+  public static Button btnSnorflerIn = createButton(coJoystick, 6);
+
+  public static Button btnChangeDrive = createButton(leftJoystick, 8);
+  public static Button btnGyroReset = createButton(rightJoystick, 6);
+  
+  public static Button btnPickupGear = createButton(coJoystick, 2);
+  public static Button btnPlaceGear = createButton(coJoystick, 5);
 
   public static Button btnShooter = createButton(coJoystick, 1);
   public static Button btnAgitator = createButton(coJoystick, 3);
   public static Button btnClimber = createButton(coJoystick, 8);
 
-  public static Button btnSnorflerIn = createButton(coJoystick, 6);
-
-  public static Button btnChangeDrive = createButton(leftJoystick, 8);
   
-  public static Button btnPickupGear = createButton(coJoystick, 2);
-  public static Button btnPlaceGear = createButton(coJoystick, 5);
-
   public static void update() {
     for (Button b: buttons) {
       b.update();
