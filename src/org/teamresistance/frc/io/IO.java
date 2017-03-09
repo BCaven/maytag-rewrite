@@ -9,7 +9,7 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.*;
 
 /**
- * Created by shrey on 2/20/2017.
+ * Created by Shreya on 2/20/2017.
  */
 public class IO {
 
@@ -19,11 +19,11 @@ public class IO {
   // Motors -- shooting
   public static CANTalon shooterMotor = new CANTalon(3);
   
-  public static VictorSP feederMotor = new VictorSP(/*2*/7);
+  public static VictorSP feederMotor = new VictorSP(2);
   public static VictorSP agitatorMotor = new VictorSP(6);
 
   // Motors -- other
-  public static VictorSP vibratorMotor = new VictorSP(/*0*/4);
+  public static VictorSP vibratorMotor = new VictorSP(0);
   public static VictorSP gearRotatorMotor = new VictorSP(5);
   public static VictorSP climberMotor = new VictorSP(9);
 
@@ -32,17 +32,17 @@ public class IO {
   public static InvertibleDigitalInput gearAlignBanner = new InvertibleDigitalInput(2, true);
   public static InvertibleDigitalInput gearRetractedLimit = new InvertibleDigitalInput(0, true);
 
-  /*
   // Drive Motors
   public static Victor leftFrontMotor = new Victor(7);
   public static Victor leftRearMotor = new Victor(8);
   public static Victor rightFrontMotor = new Victor(3);
   public static Victor rightRearMotor = new Victor(1);
-*/
-  public static Victor leftFrontMotor = new Victor(0);
-  public static Victor leftRearMotor = new Victor(2);
-  public static Victor rightFrontMotor = new Victor(1);
-  public static Victor rightRearMotor = new Victor(3);
+
+  //Fist of Death
+//  public static Victor leftFrontMotor = new Victor(0);
+//  public static Victor leftRearMotor = new Victor(2);
+//  public static Victor rightFrontMotor = new Victor(1);
+//  public static Victor rightRearMotor = new Victor(3);
 
   // Pneumatic Cylinders (controlled via Solenoids)
   public static SingleSolenoid gripSolenoid = new InvertibleSolenoid(1, 2, true);

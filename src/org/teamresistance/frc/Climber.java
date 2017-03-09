@@ -23,6 +23,10 @@ public class Climber {
     double spikeLimit = 70;
     double currTime = Time.getTime();
 
+    if(JoystickIO.btnClimber.onButtonPressed()) {
+    	climbed = false;
+    }
+    
     if (JoystickIO.btnClimber.isDown() && !climbed) {
       if (current >= spikeLimit) {
         if (currTime - prevTime >= timeDuration) {

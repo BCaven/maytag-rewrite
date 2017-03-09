@@ -4,7 +4,6 @@ import org.teamresistance.frc.mathd.Vector2d;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Created by Joseph for testing the Optical Flow
@@ -25,19 +24,19 @@ public class OFS {
   private  final byte[] register = new byte[] {0};
 
   //Amount of change since last read
-  private float raw_dx = 0;
-  private float raw_dy = 0;
+  private double raw_dx = 0;
+  private double raw_dy = 0;
 
   //Convert for Decimal Values
   //Pixel to Feet conversion factor
-  private float X_Left_Per_Ft  = -450;
-  private float X_Right_Per_Ft = -450;
-  private float Y_Fwd_Per_Ft   = -450;
-  private float Y_Rev_Per_Ft   = -450;
+  private double X_Left_Per_Ft  = -450;
+  private double X_Right_Per_Ft = -450;
+  private double Y_Fwd_Per_Ft   = -450;
+  private double Y_Rev_Per_Ft   = -450;
 
   //Distance Covered
-  private float xLinear = 0;
-  private float yLinear = 0;
+  private double xLinear = 0;
+  private double yLinear = 0;
 
   public OFS() {
     spi = new SPI(Port.kOnboardCS0);    //Finds the OF on the SPI ports
@@ -52,7 +51,7 @@ public class OFS {
   }
 
   public void init() {
-    int motionRegister = readRegister((byte)2);
+    readRegister((byte)2);
 
     xLinear = 0;
     yLinear = 0;
@@ -115,6 +114,11 @@ public class OFS {
 
   public Vector2d getPos() {
 	  return new Vector2d(getX(), getY());
+  }
+  
+  public void setPos(Vector2d pos) {
+	  this.xLinear = pos.getX();
+	  this.yLinear = pos.getY();
   }
   
  public double getX() {

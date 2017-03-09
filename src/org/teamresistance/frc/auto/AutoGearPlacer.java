@@ -1,4 +1,4 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.auto;
 
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
@@ -7,10 +7,7 @@ import org.teamresistance.frc.mathd.Vector2d;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
 import org.teamresistance.frc.vision.GearPipeline;
-import org.teamresistance.frc.vision.ShooterPipeline;
 
-import edu.wpi.cscore.AxisCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 
@@ -147,6 +144,7 @@ public class AutoGearPlacer {
 				integralDistance = 0.0;
 				errorDistance = 0.0;
 			}
+			/*
 			SmartDashboard.putNumber("Center Y Gear", centerY);
 			SmartDashboard.putNumber("Center X Gear", centerX);
 			
@@ -164,6 +162,7 @@ public class AutoGearPlacer {
 			
 			SmartDashboard.putNumber("Error Gear", error);
 			SmartDashboard.putNumber("errorDistance Gear", errorDistance);
+			*/
 		}
 
 		double deltaTime = Time.getDelta();
@@ -185,9 +184,13 @@ public class AutoGearPlacer {
 		else if (result < minOutput)
 			result = minOutput;
 
-		if (onTargetDistance(error))
+		if (onTargetDistance(errorDistance))
 			errorDistance = 0.0;
-		integral += errorDistance * deltaTime;
+		if(Math.abs(errorDistance * kPDistance) > 1.0) {
+			integralDistance = 0;
+		} else {
+			integralDistance += errorDistance * deltaTime;
+		}
 		double resultDistance = (errorDistance * kPDistance) + (integralDistance * kIDistance) + ((errorDistance - prevErrorDistance) * kDDistance / deltaTime);
 		prevErrorDistance = errorDistance;
 		if (resultDistance > maxOutputDistance)
@@ -195,8 +198,8 @@ public class AutoGearPlacer {
 		else if (resultDistance < minOutputDistance)
 			resultDistance = minOutputDistance;
 
-		SmartDashboard.putNumber("Gear Result", result);
-		SmartDashboard.putNumber("Gear Distance Result", resultDistance);
+		//SmartDashboard.putNumber("Gear Result", result);
+		//SmartDashboard.putNumber("Gear Distance Result", resultDistance);
 		
 		IO.drive.getDrive().mecanumDrive_Cartesian(JoystickIO.leftJoystick.getX(), result, 0, IO.navX.getAngle());
 	}

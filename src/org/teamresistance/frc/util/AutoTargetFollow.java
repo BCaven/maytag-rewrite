@@ -7,7 +7,6 @@ import org.teamresistance.frc.vision.ShooterPipeline;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 
 public class AutoTargetFollow {
@@ -115,10 +114,10 @@ public class AutoTargetFollow {
 				errorDistance = 0;
 			}
 			
-			SmartDashboard.putNumber("Center Y AutoTargetFollow", centerY);
-			SmartDashboard.putNumber("Center X AutoTargetFollow", centerX);
-			SmartDashboard.putNumber("Error AutoTargetFollow", error);
-			SmartDashboard.putNumber("errorDistance", errorDistance);
+			//SmartDashboard.putNumber("Center Y AutoTargetFollow", centerY);
+			//SmartDashboard.putNumber("Center X AutoTargetFollow", centerX);
+			//SmartDashboard.putNumber("Error AutoTargetFollow", error);
+			//SmartDashboard.putNumber("errorDistance", errorDistance);
 		}
 		
 		long curTime = System.currentTimeMillis(); 

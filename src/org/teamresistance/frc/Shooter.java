@@ -1,15 +1,12 @@
 package org.teamresistance.frc;
 
 import org.teamresistance.frc.io.IO;
-import org.teamresistance.frc.util.JoystickIO;
 
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /**
- * Created by shreya on 2/20/2017.
+ * Created by Shreya on 2/20/2017.
  */
 public class Shooter {
 
@@ -30,10 +27,10 @@ public class Shooter {
 
 	public void update(boolean shooter, boolean agitator) {
 		double motorOutput = IO.shooterMotor.getOutputVoltage() / IO.shooterMotor.getBusVoltage();
-		SmartDashboard.putNumber("Talon Motor Output", motorOutput);
+		//SmartDashboard.putNumber("Talon Motor Output", motorOutput);
 		
 		if(shooter) {
-			//IO.feederMotor.set(1.0);
+			IO.feederMotor.set(1.0);
 			IO.shooterMotor.changeControlMode(TalonControlMode.Speed);
 			IO.shooterMotor.set(4000);
 			
@@ -45,7 +42,7 @@ public class Shooter {
 				IO.vibratorMotor.set(0.0);
 			}
 			
-			SmartDashboard.putNumber("Talon Error", IO.shooterMotor.getClosedLoopError());
+			//SmartDashboard.putNumber("Talon Error", IO.shooterMotor.getClosedLoopError());
 		} else {
 			IO.shooterMotor.changeControlMode(TalonControlMode.PercentVbus);
 			IO.shooterMotor.set(0.0);
@@ -54,6 +51,6 @@ public class Shooter {
 			IO.vibratorMotor.set(0.0);
 		}
 		
-		SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());
+		//SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());
 	}
 }

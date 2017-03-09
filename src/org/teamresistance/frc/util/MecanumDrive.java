@@ -1,11 +1,19 @@
 package org.teamresistance.frc.util;
 
+import org.teamresistance.frc.io.IO;
+import org.teamresistance.frc.mathd.Vector2d;
+
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MecanumDrive {
 	private RobotDrive drive;
 	private AHRS gyro;
+	
+	private double xyRatio = 2.6;
+	private double STOP_DISTANCE = 0.5;
 	
 	// PID constants
 	private double kP = 0.0; // Proportional constant
@@ -85,6 +93,42 @@ public class MecanumDrive {
 		case STICK_FIELD:
 			drive.mecanumDrive_Cartesian(x, y, rotation, currentAngle);
 			break;
+		}
+	}
+	
+	public boolean driveToPos(Vector2d targetPos, double orientation, double speed) {
+		return driveToPos(targetPos, orientation, speed, STOP_DISTANCE);
+	}
+	
+	public boolean driveToPos(Vector2d targetPos, double orientation, double speed, double stopDistance) {
+		Vector2d position = IO.ofs.getPos();
+		
+		//Vector2d direction1 = new Vector2d(SPEED * Math.cos(Math.toRadians(ANGLE)), SPEED * Math.sin(Math.toRadians(ANGLE)));
+		Vector2d error = targetPos.sub(position);
+		Vector2d direction = error.normalized().mul(speed);
+		double dirMag = direction.length();
+		
+		double xOutput;
+		double yOutput;
+		
+		if(Math.abs(direction.getX()) * xyRatio < Math.abs(direction.getY())) {
+			xOutput = xyRatio * direction.getX() / Math.abs(direction.getY()) * Math.min(1, dirMag);
+			yOutput = direction.getY() / Math.abs(direction.getY()) * Math.min(1, dirMag);
+		} else {
+			xOutput = direction.getX() / Math.abs(direction.getX()) * Math.min(1, dirMag);
+			yOutput = direction.getY() / Math.abs(direction.getX()) / xyRatio * Math.min(1, dirMag);
+		}
+		
+		//SmartDashboard.putNumber("OUTPUT X", xOutput);
+		//SmartDashboard.putNumber("OUTPUT Y", yOutput);
+		
+		//SmartDashboard.putNumber("error length", error.length());
+		
+		if(error.length() > stopDistance) {
+			IO.drive.drive(xOutput, -yOutput, 0);
+			return false;
+		}  else {
+			return true;
 		}
 	}
 	

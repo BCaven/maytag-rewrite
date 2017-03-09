@@ -2,12 +2,13 @@ package org.teamresistance.frc;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.teamresistance.frc.auto.AutoGearPlacer;
 import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.MecanumDrive.DriveType;
 
 /**
- * Created by shreya on 2/20/2017.
+ * Created by ShReYa on 2/20/2017.
  */
 public class Teleop {
 
@@ -63,17 +64,12 @@ public class Teleop {
     	IO.navX.reset();
     }
     
-    // Allow for changing drive controls
-    if(JoystickIO.btnChangeDrive.onButtonPressed()) {
-      //IO.drive.init(IO.navX.getAngle(), IO.drive.getkP(), IO.drive.getkI(), IO.drive.getkD());
-    	IO.drive.init(IO.navX.getAngle(), SmartDashboard.getNumber("Drive P", IO.drive.getkP()), SmartDashboard.getNumber("Drive I", IO.drive.getkI()), SmartDashboard.getNumber("Drive D", IO.drive.getkD()));
-    	//IO.drive.nextState();
-    }
-    
+    /*
     if(JoystickIO.leftJoystick.getRawButton(2)) {
     	autoGearPlacer.init(SmartDashboard.getNumber("Gear P", 0.0), SmartDashboard.getNumber("Gear I", 0.0), SmartDashboard.getNumber("Gear D", 0.0));
     	autoGearPlacer.initDistance(SmartDashboard.getNumber("Gear Distance", 100.0), SmartDashboard.getNumber("Gear Distance P", 0.0), 0.0, SmartDashboard.getNumber("Distance D", 0.0));
     }
+    */
     
     /*
     if(JoystickIO.leftJoystick.getRawButton(2)) {
@@ -91,10 +87,7 @@ public class Teleop {
     	autoGearPlacer.update();
     } else {
     	IO.drive.setState(DriveType.STICK_FIELD);
-	    IO.drive.drive(JoystickIO.leftJoystick.getX(),
-	        JoystickIO.leftJoystick.getY(),
-	        JoystickIO.rightJoystick.getX(),
-	        JoystickIO.codriverBox.getRotation());
+	    IO.drive.drive(JoystickIO.leftJoystick.getX(), JoystickIO.leftJoystick.getY(), JoystickIO.rightJoystick.getX(), 0);
     }
   }
   

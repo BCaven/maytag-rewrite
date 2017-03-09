@@ -1,7 +1,8 @@
-package org.teamresistance.frc;
+package org.teamresistance.frc.auto;
 
 import java.util.ArrayList;
 
+import org.teamresistance.frc.Robot;
 import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.mathd.Vector2d;
 import org.teamresistance.frc.util.AutoTargetFollow;
@@ -10,11 +11,14 @@ import org.teamresistance.frc.util.MecanumDrive.DriveType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
-public class AutoTimedShoot {
+/*
+ *
+ */
+public class AutoTimedShoot implements AutoMode {
 	
 	private DriveToHopper driveToHopper = new DriveToHopper();
 	private AutoTargetFollow follower = new AutoTargetFollow();
+	private DriveToHopperAcceleration driveToHopperAccel = new DriveToHopperAcceleration();
 	
 	private int currentState = 0;
 	 
@@ -25,30 +29,71 @@ public class AutoTimedShoot {
 	
 	private double initialTime = Time.getTime();
 	
+	private ArrayList<AutoDrivePath> drivePaths = new ArrayList<>();
+	private int path = 0;
+	
+	private int driveMode = 0;
+	
 	public void init() {
-		SmartDashboard.putNumber("Acceleration Threshhold", 0.48);
-		ArrayList<Vector2d> targetList = new ArrayList<>();
-		//targetList.add(new Vector2d(-2, 10));
-		targetList.add(new Vector2d(-0.25, 9));
-		driveToHopper.init(new Vector2d(-9, 1.7), targetList);
+		//SmartDashboard.putNumber("Acceleration Threshhold", 0.48);
+		path = (int) SmartDashboard.getNumber("Drive Path", path);
+		AutoDrivePath redPath = new AutoDrivePath();
+		redPath.startingPosition = new Vector2d(-9, 1.7);
+		redPath.speed = 0.85;
+		redPath.orientation = 0.0;
+		redPath.targetList = new ArrayList<>();
+		redPath.targetList.add(new Vector2d(-0.25, 9));
+		drivePaths.add(redPath);
+		
+		AutoDrivePath bluePath = new AutoDrivePath();
+		bluePath.startingPosition = new Vector2d(9, 1.7);
+		bluePath.speed = 0.85;
+		bluePath.orientation = 0.0;
+		bluePath.targetList = new ArrayList<>();
+		bluePath.targetList.add(new Vector2d(0.25, 9));
+		drivePaths.add(bluePath);
+		
 	    follower.init(0.08, 0.0, 0.0);
 	    follower.initDistance(100, 0.0071, 0, 0.00325);
 	    currentState = 0;
 	}
 	
-	public void update() {
-		SmartDashboard.putNumber("Auto State", currentState);
+	public boolean update() {
+		boolean done = false;
+		//SmartDashboard.putNumber("Auto State", currentState);
 		double acceleration = Math.sqrt((Math.pow(IO.navX.getWorldLinearAccelX(),2) + Math.pow(IO.navX.getWorldLinearAccelY(), 2)));
-		SmartDashboard.putNumber("Acceleration", acceleration);
+		//SmartDashboard.putNumber("Acceleration", acceleration);
+		driveMode = (int) SmartDashboard.getNumber("Auto Drive Mode", 1);
 		switch(currentState) {
 		case 0:
 			IO.drive.setState(DriveType.STICK_FIELD);
 			initialTime = Time.getTime();
 			currentState = 1;
+			switch(driveMode) {
+			case 0:
+				driveToHopper.init(drivePaths.get(path));
+				break;
+			case 1:
+				driveToHopperAccel.init();
+				break;
+			}
+			
 		case 1:
-			boolean done = driveToHopper.update();
+			boolean driveToHopperDone;
+			switch(driveMode) {
+			case 0:
+				driveToHopperDone = driveToHopper.update();
+				break;
+			case 1:
+				driveToHopperDone = driveToHopperAccel.update();
+				break;
+			default:
+				driveToHopperDone = false;	
+				break;
+			}
+			
 			SmartDashboard.putBoolean("Drive to Hopper", done);
-			if (done || Time.getTime() - initialTime >= MAX_RUN_TIME_TO_HOPPER) {
+			if (driveToHopperDone || Time.getTime() - initialTime >= MAX_RUN_TIME_TO_HOPPER) {
 				IO.drive.setState(DriveType.STICK_FIELD);
 				IO.drive.drive(0, 0, 0, 0);
 				currentState = 2;
@@ -66,7 +111,7 @@ public class AutoTimedShoot {
 			}
 			break;
 		case 3:
-			// Run Vibrator?
+			// Run Todd's Vibrator?
 			IO.drive.setState(DriveType.STICK_FIELD);
 			if (Time.getTime() - initialTime < MAX_DRIVE_TO_BALLS) {
 				IO.drive.drive(0, 0.6, 0, 0);
@@ -77,7 +122,8 @@ public class AutoTimedShoot {
 			}
 			break;
 		case 4:
-			// Run Vibrator?
+			// Run Todd's Vibrator?
+			// To move Todd's balls into the robot's hopper
 			IO.drive.setState(DriveType.STICK_FIELD);
 			if (Time.getTime() - initialTime < MAX_SIT_FOR_BALLS) {
 				IO.drive.drive(0, 0, 0, 0);
@@ -90,12 +136,26 @@ public class AutoTimedShoot {
 		case 5:
 			IO.drive.setState(DriveType.STICK_FIELD);
 			//Start Tracking!
-			SmartDashboard.putBoolean("Follower", follower.update());
-			//Robot.shooter.update(true, follower.update());
+			//SmartDashboard.putBoolean("Follower", follower.update());
+			if(follower.update()) {
+				currentState = 6;
+			}
+			Robot.shooter.update(true, false);
+			break;
+		case 6:
+			follower.update();
+			Robot.shooter.update(true, true);
 			break;
 		default:
+			done = true;
 			IO.drive.setState(DriveType.STICK_FIELD);
 			IO.drive.drive(0, 0, 0, 0);
 		}
+		return done;
+	}
+
+	@Override
+	public String toString() {
+		return "Auto Timed Shoot";
 	}
 }
