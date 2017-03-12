@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.*;
  */
 public class IO {
 
+	public static double VIBRATOR_SPEED = 0.6;
+	
   // PDP
   public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 

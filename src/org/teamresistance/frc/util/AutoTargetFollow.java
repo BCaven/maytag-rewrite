@@ -7,6 +7,7 @@ import org.teamresistance.frc.vision.ShooterPipeline;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 
 public class AutoTargetFollow {
@@ -56,7 +57,7 @@ public class AutoTargetFollow {
 	
 	public AutoTargetFollow() {
 		imgLock = new Object();
-		camera = CameraServer.getInstance().addAxisCamera("10.0.86.128");
+		camera = CameraServer.getInstance().addAxisCamera("axis-camera.local");
 	}
 	
 	public void init(double p, double i, double d) {
@@ -105,25 +106,26 @@ public class AutoTargetFollow {
 			if(Double.isFinite(centerY)) {
 				error = imageHeight/2.0 - centerY;
 			} else {
-				error = 0;
+				error = imageHeight/2.0;
 			}
 			
 			if(Double.isFinite(centerX)) {
 				errorDistance = distanceSetpoint - centerX;
 			} else {
-				errorDistance = 0;
+				errorDistance = distanceSetpoint;
 			}
 			
-			//SmartDashboard.putNumber("Center Y AutoTargetFollow", centerY);
-			//SmartDashboard.putNumber("Center X AutoTargetFollow", centerX);
-			//SmartDashboard.putNumber("Error AutoTargetFollow", error);
-			//SmartDashboard.putNumber("errorDistance", errorDistance);
+			SmartDashboard.putNumber("Center Y AutoTargetFollow", centerY);
+			SmartDashboard.putNumber("Center X AutoTargetFollow", centerX);
+			SmartDashboard.putNumber("Error AutoTargetFollow", error);
+			SmartDashboard.putNumber("errorDistance", errorDistance);
 		}
 		
 		long curTime = System.currentTimeMillis(); 
 		double deltaTime = (curTime - prevTime) / 1000.0;
-		
-		if(onTargetRotation(error)) {
+		boolean errorOnTarget = onTargetRotation(error);
+		SmartDashboard.putBoolean("Error On Target", errorOnTarget);
+		if(errorOnTarget) {
 			error = 0.0;
 		} else {
 			done = false;
@@ -134,7 +136,9 @@ public class AutoTargetFollow {
 		if(result > maxOutput) result = maxOutput;
 		else if(result < minOutput) result = minOutput;
 		
-		if(onTargetDistance(errorDistance)) {
+		boolean errorDistanceOnTarget = onTargetDistance(errorDistance);
+		SmartDashboard.putBoolean("Error On Target Distance", errorDistanceOnTarget);
+		if(errorDistanceOnTarget) {
 			errorDistance = 0.0;
 		} else {
 			done = false;

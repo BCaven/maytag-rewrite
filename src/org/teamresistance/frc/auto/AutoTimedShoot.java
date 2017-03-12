@@ -25,14 +25,14 @@ public class AutoTimedShoot implements AutoMode {
 	private final double MAX_RUN_TIME_TO_HOPPER = 5.0;
 	private final double MAX_HOPPER_RAM_TIME = 0.25;
 	private final double MAX_DRIVE_TO_BALLS = 0.25;
-	private final double MAX_SIT_FOR_BALLS = 2.0;
+	private final double MAX_SIT_FOR_BALLS = 0.5;
 	
 	private double initialTime = Time.getTime();
 	
 	private ArrayList<AutoDrivePath> drivePaths = new ArrayList<>();
 	private int path = 0;
 	
-	private int driveMode = 0;
+	private int driveMode = 1;
 	
 	public void init() {
 		//SmartDashboard.putNumber("Acceleration Threshhold", 0.48);
@@ -55,6 +55,7 @@ public class AutoTimedShoot implements AutoMode {
 		
 	    follower.init(0.08, 0.0, 0.0);
 	    follower.initDistance(100, 0.0071, 0, 0.00325);
+	    follower.start();
 	    currentState = 0;
 	}
 	
@@ -62,11 +63,11 @@ public class AutoTimedShoot implements AutoMode {
 		boolean done = false;
 		//SmartDashboard.putNumber("Auto State", currentState);
 		double acceleration = Math.sqrt((Math.pow(IO.navX.getWorldLinearAccelX(),2) + Math.pow(IO.navX.getWorldLinearAccelY(), 2)));
-		//SmartDashboard.putNumber("Acceleration", acceleration);
-		driveMode = (int) SmartDashboard.getNumber("Auto Drive Mode", 1);
+		SmartDashboard.putNumber("Acceleration", acceleration);
+		//driveMode = (int) SmartDashboard.getNumber("Auto Drive Mode", 1);
 		switch(currentState) {
 		case 0:
-			IO.drive.setState(DriveType.STICK_FIELD);
+			IO.drive.setState(DriveType.KNOB_FIELD);
 			initialTime = Time.getTime();
 			currentState = 1;
 			switch(driveMode) {
@@ -100,15 +101,17 @@ public class AutoTimedShoot implements AutoMode {
 				//currentState = -1;
 				initialTime = Time.getTime();
 			}
+			Robot.shooter.update(true, false);
 			break;
 		case 2:
 			IO.drive.setState(DriveType.STICK_FIELD);
 			if (Time.getTime() - initialTime < MAX_HOPPER_RAM_TIME) {
-				IO.drive.drive(1.0, 0, 0, 0);
+				IO.drive.drive(SmartDashboard.getNumber("Alliance", 0), 0, 0, 0);
 			} else {
 				currentState = 3;
 				initialTime = Time.getTime();
 			}
+			Robot.shooter.update(true, false);
 			break;
 		case 3:
 			// Run Todd's Vibrator?
@@ -120,6 +123,8 @@ public class AutoTimedShoot implements AutoMode {
 				currentState = 4;
 				initialTime = Time.getTime();
 			}
+			IO.vibratorMotor.set(IO.VIBRATOR_SPEED);
+			Robot.shooter.update(true, false);
 			break;
 		case 4:
 			// Run Todd's Vibrator?
@@ -132,6 +137,8 @@ public class AutoTimedShoot implements AutoMode {
 				currentState = 5;
 				initialTime = Time.getTime();
 			}
+			IO.vibratorMotor.set(IO.VIBRATOR_SPEED);
+			Robot.shooter.update(true, false);
 			break;
 		case 5:
 			IO.drive.setState(DriveType.STICK_FIELD);
@@ -148,6 +155,7 @@ public class AutoTimedShoot implements AutoMode {
 			break;
 		default:
 			done = true;
+			Robot.shooter.update(false, false);
 			IO.drive.setState(DriveType.STICK_FIELD);
 			IO.drive.drive(0, 0, 0, 0);
 		}

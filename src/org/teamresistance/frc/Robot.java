@@ -4,6 +4,7 @@ import org.teamresistance.frc.auto.Auto;
 import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
+import org.teamresistance.frc.util.MecanumDrive.DriveType;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Relay;
@@ -25,12 +26,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		// Potential Anarchy
-		SmartDashboard.putNumber("Drive Path", 0);
-		SmartDashboard.putNumber("Auto Drive Mode", 0);
-		SmartDashboard.getNumber("Auto Mode", 0);
-		SmartDashboard.getNumber("Drive Speed", 0);
+		SmartDashboard.putNumber("Alliance", 0);
 		
 		IO.init();
+		
+		IO.drive.init(IO.navX.getAngle(), 0.08, 0.0, 0.0);
+		
+		
 		teleop = new Teleop();
 		teleop.init();
 
@@ -40,21 +42,22 @@ public class Robot extends IterativeRobot {
 		shooter = new Shooter();
 		shooter.init();
 		
-		IO.ofs.init();
+		IO.gearCamera.setResolution(480, 320);
 	}
 
 	@Override
 	public void teleopInit() {
-		
+		IO.navX.reset();
+		IO.drive.setState(DriveType.STICK_FIELD);
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		IO.compressorRelay.set(IO.compressor.enabled() ? Relay.Value.kForward : Relay.Value.kOff);
+		
 		Time.update();
 		JoystickIO.update();
 		teleop.update();
-		vision.update();
 	}
 
 	public void autonomousInit() {

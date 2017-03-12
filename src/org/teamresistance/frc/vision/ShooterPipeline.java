@@ -66,7 +66,7 @@ public class ShooterPipeline implements VisionPipeline {
 		
 		//Step  HSL_Threshold0:
 		Mat hslThresholdInput = blurOutput;
-		double[] hslThresholdHue = {66, 89};
+		double[] hslThresholdHue = {62, 95};
 		double[] hslThresholdSaturation = {156, 255};
 		double[] hslThresholdLuminance = {23, 90};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
@@ -78,12 +78,12 @@ public class ShooterPipeline implements VisionPipeline {
 
 		//Step  Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 0;
+		double filterContoursMinArea = 4;
 		double filterContoursMinPerimeter = 0;
 		double filterContoursMinWidth = 0;
-		double filterContoursMaxWidth = 1000000;
+		double filterContoursMaxWidth = 100;
 		double filterContoursMinHeight = 0;
-		double filterContoursMaxHeight = 10000000;
+		double filterContoursMaxHeight = 50;
 		double[] filterContoursSolidity = {0, 100};
 		double filterContoursMaxVertices = 1000000000.0;
 		double filterContoursMinVertices = 0;

@@ -11,6 +11,7 @@ public class Gear {
 	private final double START_ROTATE_DELAY = 1.0;
 	private final double RELEASE_DELAY = 3.0;
 	private final double ROTATE_TIMEOUT = 5.0;
+	private final double PICKUP_DELAY = 0.9;
 	
 	private int currentState = 0;
 	private double initialTime = Time.getTime();
@@ -25,6 +26,7 @@ public class Gear {
 			setPos(true, false, false);
 			if(JoystickIO.btnPickupGear.onButtonPressed()) {
 				currentState = 1;
+				initialTime = Time.getTime();
 			} else if(JoystickIO.btnPlaceGear.onButtonPressed()) {
 				currentState = 10;
 			}
@@ -32,8 +34,8 @@ public class Gear {
 		case 1: // Waiting
 			setPos(false, true, false);
 			if(!JoystickIO.btnPickupGear.isDown()) {
-				currentState = 0;
-			} else if(IO.gearFindBanner.get()) {
+				currentState = 2;
+			} else if(IO.gearFindBanner.get() && Time.getTime() - initialTime > PICKUP_DELAY) {
 				currentState = 2;
 			}
 			break;

@@ -5,12 +5,15 @@ import org.teamresistance.frc.io.IO;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Created by Shreya on 2/20/2017.
  */
 public class Shooter {
 
 	public void init() {
+		SmartDashboard.putNumber("Shooter Setpoint", 3100);
 		IO.shooterMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		IO.shooterMotor.reverseSensor(false);
 		IO.shooterMotor.reverseOutput(false);
@@ -27,16 +30,16 @@ public class Shooter {
 
 	public void update(boolean shooter, boolean agitator) {
 		double motorOutput = IO.shooterMotor.getOutputVoltage() / IO.shooterMotor.getBusVoltage();
-		//SmartDashboard.putNumber("Talon Motor Output", motorOutput);
+		SmartDashboard.putNumber("Talon Motor Output", motorOutput);
 		
 		if(shooter) {
 			IO.feederMotor.set(1.0);
 			IO.shooterMotor.changeControlMode(TalonControlMode.Speed);
-			IO.shooterMotor.set(4000);
+			IO.shooterMotor.set(SmartDashboard.getNumber("Shooter Setpoint", 3100));
 			
 			if (agitator) {
-				IO.agitatorMotor.set(0.3);
-				IO.vibratorMotor.set(0.6);
+				IO.agitatorMotor.set(0.30);
+				IO.vibratorMotor.set(IO.VIBRATOR_SPEED);
 			} else {
 				IO.agitatorMotor.set(0.0);
 				IO.vibratorMotor.set(0.0);
@@ -51,6 +54,6 @@ public class Shooter {
 			IO.vibratorMotor.set(0.0);
 		}
 		
-		//SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());
+		SmartDashboard.putNumber("Talon Speed", IO.shooterMotor.getSpeed());
 	}
 }

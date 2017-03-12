@@ -11,7 +11,7 @@ public class DriveToHopperAcceleration implements AutoMode {
 	private double STOP_DELAY = 1.5;
 	private double initialTime;
 	
-	private double ANGLE = 60.0;
+	private double ANGLE = 80.0;
 	private double SPEED = 0.85;
 	
 	private double ACCELERATION = 1.2;
@@ -25,9 +25,9 @@ public class DriveToHopperAcceleration implements AutoMode {
 	}
 	
 	public boolean update() {
-		IO.drive.setState(MecanumDrive.DriveType.STICK_FIELD);
+		IO.drive.setState(MecanumDrive.DriveType.KNOB_FIELD);
 		double acceleration = Math.sqrt((Math.pow(IO.navX.getWorldLinearAccelX(), 2) + Math.pow(IO.navX.getWorldLinearAccelY(), 2)));
-		//SmartDashboard.putNumber("Acceleration", acceleration);
+		SmartDashboard.putNumber("Acceleration", acceleration);
 		ACCELERATION = SmartDashboard.getNumber("Acceleration Threshhold", ACCELERATION);
 		if(!done && acceleration > ACCELERATION && Time.getTime() - initialTime > STOP_DELAY) {
 			IO.drive.drive(0, 0, 0);
@@ -37,7 +37,7 @@ public class DriveToHopperAcceleration implements AutoMode {
 			IO.drive.drive(0, 0, 0);
 			return true;
 		} else {
-			IO.drive.drive(SPEED * Math.sin(Math.toRadians(ANGLE)), -SPEED * Math.cos(Math.toRadians(ANGLE)), 0);
+			IO.drive.drive(SmartDashboard.getNumber("Alliance", 0) * SPEED * Math.sin(Math.toRadians(ANGLE)), -SPEED * Math.cos(Math.toRadians(ANGLE)), 0, 0);
 			return false;
 		}
 		
