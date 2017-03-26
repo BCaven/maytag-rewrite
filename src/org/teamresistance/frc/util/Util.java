@@ -12,34 +12,28 @@ public class Util {
 		}
 	}
 
-	public static double scaleJoytick(double input) {
-		if (Math.abs(input) < 0.05) {
-			return 0;
-		} else if (input > 0) {
-			return input <= 0.65 ? (0.02225+0.735 * input) : (-0.428571+1.42857 * input);
-		} else {
-			return input >= -0.65 ? (-0.02225+0.735 * input) : (0.428571+1.42857 * input);
-		}
-
-		// if (Math.abs(input) < 0.05) {
-		// return 0;
-		// } else if(input > 0) {
-		// return input <= 0.85 ? (0.0314375+0.55125*input) :
-		// (-2.33333+3.33333*input);
-		// } else {
-		// return input >= -0.85 ? (-0.0314375+0.55125*input) :
-		// (2.33333+3.33333*input);
-		// }
-
-		// if (Math.abs(input) < 0.05) {
-		// return 0;
-		// } else if(input > 0) {
-		// return input <= 0.8 && input >= 0.05 ? ((input * 0.55) + 0.0725) :
-		// ((input * 2.4375) - 1.4375);
-		// } else {
-		// return input >= -0.8 && input <= -0.05 ? ((input * 0.55) - 0.0725) :
-		// ((input * 2.4375) + 1.4375);
-		// }
+	public static double scaleInput(double input) {
+		double[] scaleArray = { 0.0, 0.1, 0.12, 0.14, 0.16, 0.18, 0.20, 0.24,
+                				0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 };
+        // get the corresponding index for the scaleInput array.
+        int index = (int) (input * scaleArray.length);
+        // index should be positive.
+        if (index < 0) {
+            index = -index;
+        }
+        // index cannot exceed size of array minus 1.
+        if (index >= scaleArray.length) {
+            index = scaleArray.length - 1;
+        }
+        // get value from the array.
+        double scaled = 0.0;
+        if (input < 0) {
+            scaled = -scaleArray[index];
+        } else {
+            scaled = scaleArray[index];
+        }
+        // return scaled value.
+        return scaled;
 	}
 
 	public static double clip(double input, double min, double max) {

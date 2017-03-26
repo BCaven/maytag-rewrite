@@ -28,7 +28,7 @@ public class DriveToHopper {
 		//SmartDashboard.putNumber("Current Target", currentTarget);
 		path.speed = SmartDashboard.getNumber("Drive Speed", path.speed);
 		
-		boolean arrived = IO.drive.driveToPos(path.targetList.get(currentTarget), 0, path.speed);
+		boolean arrived = true /*IO.drive.driveToPos(path.targetList.get(currentTarget), 0, path.speed)*/;
 		
 		if(arrived) {
 			if(currentTarget != path.targetList.size() - 1) {

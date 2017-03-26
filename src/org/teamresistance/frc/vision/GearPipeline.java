@@ -34,24 +34,14 @@ public class GearPipeline implements VisionPipeline {
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
 
-	private Mat source0;
-	
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 
 	/**
-	 * This method is a generated setter for source0.
-	 * @param source the Mat to set
-	 */
-	public void setsource0(Mat source0) {
-		this.source0 = source0;
-	}
-	
-	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	public void process() {
+	@Override	public void process(Mat source0) {
 		// Step Resize_Image0:
 		Mat resizeImageInput = source0;
 		double resizeImageWidth = 320.0;
@@ -62,16 +52,16 @@ public class GearPipeline implements VisionPipeline {
 		// Step Blur0:
 		Mat blurInput = resizeImageOutput;
 		BlurType blurType = BlurType.get("Gaussian Blur");
-		double blurRadius = 2.7027027027027026;
+		double blurRadius = 6.306306306306307;
 		blur(blurInput, blurType, blurRadius, blurOutput);
 
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = blurOutput;
-		double[] hslThresholdHue = {42, 109};
-		double[] hslThresholdSaturation = {161, 255};
-		double[] hslThresholdLuminance = {37, 101};
+		double[] hslThresholdHue = {72.84172661870504, 107.8156996587031};
+		double[] hslThresholdSaturation = {167.40107913669067, 255.0};
+		double[] hslThresholdLuminance = {82.55395683453237, 161.44197952218428};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
-		
+
 		// Step Find_Contours0:
 		Mat findContoursInput = hslThresholdOutput;
 		boolean findContoursExternalOnly = true;
@@ -79,7 +69,7 @@ public class GearPipeline implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 190;
+		double filterContoursMinArea = 10.0;
 		double filterContoursMinPerimeter = 0.0;
 		double filterContoursMinWidth = 0.0;
 		double filterContoursMaxWidth = 1000000.0;
@@ -91,6 +81,7 @@ public class GearPipeline implements VisionPipeline {
 		double filterContoursMinRatio = 0.0;
 		double filterContoursMaxRatio = 1000.0;
 		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
+
 	}
 
 	/**
@@ -299,11 +290,8 @@ public class GearPipeline implements VisionPipeline {
 		}
 	}
 
-	@Override
-	public void process(Mat image) {
-		setsource0(image);
-		process();
-	}
-}
 
+
+
+}
 

@@ -2,6 +2,7 @@ package org.teamresistance.frc;
 
 import org.teamresistance.frc.auto.Auto;
 import org.teamresistance.frc.io.IO;
+import org.teamresistance.frc.mathd.Rectangle;
 import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
 import org.teamresistance.frc.util.MecanumDrive.DriveType;
@@ -30,7 +31,7 @@ public class Robot extends IterativeRobot {
 		
 		IO.init();
 		
-		IO.drive.init(IO.navX.getAngle(), 0.08, 0.0, 0.0);
+		IO.drive.init(1, 0.02, 0.000, 0.02, 0.0);
 		
 		
 		teleop = new Teleop();
@@ -41,8 +42,6 @@ public class Robot extends IterativeRobot {
 		
 		shooter = new Shooter();
 		shooter.init();
-		
-		IO.gearCamera.setResolution(480, 320);
 	}
 
 	@Override

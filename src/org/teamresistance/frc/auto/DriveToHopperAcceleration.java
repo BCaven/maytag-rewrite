@@ -26,7 +26,7 @@ public class DriveToHopperAcceleration implements AutoMode {
 	
 	public boolean update() {
 		IO.drive.setState(MecanumDrive.DriveType.KNOB_FIELD);
-		double acceleration = Math.sqrt((Math.pow(IO.navX.getWorldLinearAccelX(), 2) + Math.pow(IO.navX.getWorldLinearAccelY(), 2)));
+		double acceleration = Math.sqrt((Math.pow(IO.navX.getAHRS().getWorldLinearAccelX(), 2) + Math.pow(IO.navX.getAHRS().getWorldLinearAccelY(), 2)));
 		SmartDashboard.putNumber("Acceleration", acceleration);
 		ACCELERATION = SmartDashboard.getNumber("Acceleration Threshhold", ACCELERATION);
 		if(!done && acceleration > ACCELERATION && Time.getTime() - initialTime > STOP_DELAY) {

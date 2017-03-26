@@ -62,7 +62,7 @@ public class AutoTimedShoot implements AutoMode {
 	public boolean update() {
 		boolean done = false;
 		//SmartDashboard.putNumber("Auto State", currentState);
-		double acceleration = Math.sqrt((Math.pow(IO.navX.getWorldLinearAccelX(),2) + Math.pow(IO.navX.getWorldLinearAccelY(), 2)));
+		double acceleration = Math.sqrt((Math.pow(IO.navX.getAHRS().getWorldLinearAccelX(),2) + Math.pow(IO.navX.getAHRS().getWorldLinearAccelY(), 2)));
 		SmartDashboard.putNumber("Acceleration", acceleration);
 		//driveMode = (int) SmartDashboard.getNumber("Auto Drive Mode", 1);
 		switch(currentState) {

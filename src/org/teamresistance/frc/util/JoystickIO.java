@@ -20,13 +20,17 @@ public class JoystickIO {
 
 	public static Button btnGyroReset = createButton(rightJoystick, 6);
 
+	public static Button btnHoldLeft = createButton(rightJoystick, 7);
+	public static Button btnHoldCenter = createButton(rightJoystick, 8);
+	public static Button btnHoldRight = createButton(rightJoystick, 10);
+	
 	public static Button btnPickupGear = createButton(coJoystick, 2);
 	public static Button btnPlaceGear = createButton(coJoystick, 5);
 
 	public static Button btnShooter = createButton(coJoystick, 1);
 	public static Button btnAgitator = createButton(coJoystick, 3);
 	public static Button btnClimber = createButton(coJoystick, 8);
-
+	
 	public static void update() {
 		for (Button b : buttons) {
 			b.update();

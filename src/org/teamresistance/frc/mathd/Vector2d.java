@@ -1,6 +1,12 @@
 package org.teamresistance.frc.mathd;
 
-public class Vector2d {
+import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
+import edu.wpi.first.wpilibj.tables.ITable;
+
+public class Vector2d implements LiveWindowSendable {
+	
+	private ITable table;
+	
 	private double x;
 	private double y;
 
@@ -131,6 +137,41 @@ public class Vector2d {
 
 	public Vector2d getYX() {
 		return new Vector2d(getY(), getX());
+	}
+
+	@Override
+	public void initTable(ITable subtable) {
+		this.table = subtable;
+		updateTable();
+	}
+
+	@Override
+	public ITable getTable() {
+		return table;
+	}
+
+	@Override
+	public String getSmartDashboardType() {
+		return "Vector2d";
+	}
+
+	@Override
+	public void updateTable() {
+		if(table == null) return;
+		table.putNumber("X", getX());
+		table.putNumber("Y", getY());
+	}
+
+	@Override
+	public void startLiveWindowMode() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopLiveWindowMode() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
