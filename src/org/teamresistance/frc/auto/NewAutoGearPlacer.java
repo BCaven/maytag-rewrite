@@ -7,16 +7,15 @@ import org.opencv.imgproc.Imgproc;
 import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.mathd.Rectangle;
 import org.teamresistance.frc.mathd.Vector2d;
-import org.teamresistance.frc.util.JoystickIO;
 import org.teamresistance.frc.util.Time;
 import org.teamresistance.frc.vision.GearPipeline;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 
-public class AutoGearPlacer {
+public class NewAutoGearPlacer {
 
-	private static AutoGearPlacer instance = null;
+	private static NewAutoGearPlacer instance = null;
 	
 	private double imageWidth = 320;
 	private double imageHeight = 240;
@@ -29,14 +28,17 @@ public class AutoGearPlacer {
 	private boolean newData = false;
 	
 	private Vector2d center = new Vector2d(144,120);
-	private double distanceCenters = 0.0;
+	private double distanceXCenters = 0.0;
 	
-	private double prevXError = 0.0;
-	private double brakeStartTime = Time.getTime();
-	private double brakeXDirection = 0.0;
-	private boolean xBrake = false;
+	// PID variables
+	private double prevError = 0.0; // The error from the previous loop
+	private double integral = 0.0; // Error integrated over time
+
+	private double errorDeadband = 5.0;
 	
-	private AutoGearPlacer() { }
+	private double minMoveSpeed = 0.135; //0.2
+	
+	private NewAutoGearPlacer() { }
 	
 	private void start() {
 		visionThread = new VisionThread(IO.gearCamera, new GearPipeline(), pipeline -> {
@@ -56,7 +58,10 @@ public class AutoGearPlacer {
 			}
 		});
 		visionThread.start();
-		SmartDashboard.putNumber("kP Gear Lateral Translate", 0.0);
+		SmartDashboard.putNumber("kP Gear", 0.0);
+		SmartDashboard.putNumber("kI Gear", 0.0);
+		SmartDashboard.putNumber("kD Gear", 0.0);
+		SmartDashboard.putNumber("Min Move Speed", 0.135);
 	}
 
 	public Vector2d update() {
@@ -76,7 +81,7 @@ public class AutoGearPlacer {
 						pair = i;
 					}
 				}
-				distanceCenters = Math.abs(rects.get(pair).size.getX() - rects.get(pair+1).size.getX());
+				distanceXCenters = Math.abs(rects.get(pair).getCenter().getX() - rects.get(pair+1).getCenter().getX());
 				center = rects.get(pair).getCenter().add(rects.get(pair+1).getCenter()).div(2);
 			}
 		}
@@ -87,43 +92,51 @@ public class AutoGearPlacer {
 		} 
 		
 		double robotXSpeed = calcRobotXSpeed();
-				
-		double robotYSpeed = calcRobotYSpeed(robotXSpeed);
-		
+		double robotYSpeed = 0;		
 		return new Vector2d(robotXSpeed, robotYSpeed);
 	}
 	
 	private double calcRobotXSpeed() {
-		final double ERROR_DEADBAND = 5.0;
 		final double SETPOINT = 144;
-		final double BRAKE_TIME = 0.05;
-		final double BRAKE_SPEED = 0.6;
 		SmartDashboard.putData("Center Contours", center);
-		SmartDashboard.putNumber("Center Image X", SETPOINT);
-		double error = (center.getX() - SETPOINT) / distanceCenters;
+		SmartDashboard.putData("Center Image X", new Vector2d(SETPOINT, 123));
+		double error = (center.getX() - SETPOINT) / distanceXCenters;
+		SmartDashboard.putNumber("Image Error", error);
+		SmartDashboard.putNumber("Distance Between Centers", distanceXCenters);
 		double result;
-		if(xBrake) {
-			if(Time.getTime() - brakeStartTime > BRAKE_TIME) {
-				xBrake = false;
-				result = 0.0;
-			} else {
-				result = brakeXDirection * BRAKE_SPEED;
-			}
-		} else if(Math.abs(error) < ERROR_DEADBAND) {
-			error = 0.0;
-			result = 0.0;
-			if(prevXError != 0.0) {
-				brakeXDirection = -prevXError / Math.abs(prevXError);
-				brakeStartTime = Time.getTime();
-				xBrake = false;
-			}
-		} else {
-			double kP = SmartDashboard.getNumber("kP Gear Lateral Translate", 0.0);
-			result = (error * kP);
+		double kP = SmartDashboard.getNumber("kP Gear", 0.0);
+		double kI = SmartDashboard.getNumber("kI Gear", 0.0);
+		double kD = SmartDashboard.getNumber("kD Gear", 0.0);	
+		
+		double maxIntegralError = 0.2;
+		if (kI != 0) {
+            double potentialIGain = (integral + error) * kI;
+            if (potentialIGain < maxIntegralError) {
+              if (potentialIGain > -maxIntegralError) {
+                integral += error;
+              } else {
+                integral = -maxIntegralError / kI; // -1 / kI
+              }
+            } else {
+              integral = maxIntegralError / kI; // 1 / kI
+            }
+        } else {
+        	integral = 0;
+        }
+		
+		if (onTarget(error)) {
+			error = 0;
 		}
-		
-		prevXError = error;
-		
+        result = (kP * error) + (kI * integral) + (kD * (error - prevError));
+       
+       	prevError = error;
+       	
+        if (result > 1) {
+          result = 1;
+        } else if (result < -1) {
+          result = -1;
+        }
+			
 		return xSpeedCorrection(result);
 	}
 	
@@ -140,15 +153,15 @@ public class AutoGearPlacer {
 	}
 	
 	private double xSpeedCorrection(double in) {
-		final double minMoveSpeed = 0.2; // 0.135
-		double result = (1 - minMoveSpeed) * in;
-		
+		minMoveSpeed = SmartDashboard.getNumber("Min Move Speed", 0.135);
+//		double result = (1 - minMoveSpeed) * in;
+		double result = in;
 		if(in == 0.0) {
 			result = 0.0;
-		} else if(in < 0.0) {
-			result -= minMoveSpeed;
-		} else if(in > 0.0) {
-			result += minMoveSpeed;
+		} else if(in < 0.0 && in > -minMoveSpeed) {
+			result = -minMoveSpeed;
+		} else if(in > 0.0 && in < minMoveSpeed) {
+			result = minMoveSpeed;
 		} else if(in < -1.0) {
 			result = -1.0;
 		} else if(in > 1.0) {
@@ -158,12 +171,16 @@ public class AutoGearPlacer {
 		return result;
 	}
 	
-	public static AutoGearPlacer getInstance() {
+	public static NewAutoGearPlacer getInstance() {
 		if(instance == null) {
-			instance = new AutoGearPlacer();
+			instance = new NewAutoGearPlacer();
 			instance.start();
 		}
 		return instance;
+	}
+	
+	private boolean onTarget(double error) {
+		return Math.abs(error) <= errorDeadband / distanceXCenters;
 	}
 	
 }

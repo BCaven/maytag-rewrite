@@ -1,6 +1,7 @@
 package org.teamresistance.frc;
 
 import org.teamresistance.frc.auto.AutoGearPlacer;
+import org.teamresistance.frc.auto.NewAutoGearPlacer;
 import org.teamresistance.frc.io.IO;
 import org.teamresistance.frc.mathd.Vector2d;
 import org.teamresistance.frc.util.JoystickIO;
@@ -16,7 +17,6 @@ public class Teleop {
 
 	private Climber climber;
 	private Gear gear;
-	private AutoGearPlacer gearPlacer = new AutoGearPlacer();
 
 	private boolean grabAngleOnce = true;
 	private double holdAngle = 0;
@@ -30,7 +30,10 @@ public class Teleop {
 		SmartDashboard.putNumber("Rotate Speed", 0.0);
 		SmartDashboard.putNumber("Y Speed", 0.0);
 		SmartDashboard.putNumber("X Speed", 0.0);
-		gearPlacer.start();
+		AutoGearPlacer.getInstance();
+		
+		holdAngle = IO.navX.getNormalizedAngle();
+		
 		// IO.drive.init(IO.navX.getAngle(), 0.08, 0.0, 0.0);
 		// SmartDashboard.putNumber("Drive P", IO.drive.getkP());
 		// SmartDashboard.putNumber("Drive I", IO.drive.getkI());
@@ -79,7 +82,7 @@ public class Teleop {
 			IO.drive.drive(scaledX, scaledY, 0, 330);
 			grabAngleOnce = true;
 		} else if (JoystickIO.btnHoldCenter.isDown()) {
-			Vector2d speed = gearPlacer.update().rotate(270);
+			Vector2d speed = NewAutoGearPlacer.getInstance().update();
 			IO.drive.setState(DriveType.ROTATE_PID);
 			IO.drive.drive(speed.getX(), speed.getY(), 0, 270);
 			grabAngleOnce = true;
@@ -111,7 +114,7 @@ public class Teleop {
 
 		if (JoystickIO.btnGyroReset.onButtonPressed()) {
 			IO.navX.reset();
-			grabAngleOnce = true;
+			holdAngle = 0;
 		}
 	}
 

@@ -48,6 +48,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		IO.navX.reset();
 		IO.drive.setState(DriveType.STICK_FIELD);
+		teleop.init();
 	}
 
 	@Override

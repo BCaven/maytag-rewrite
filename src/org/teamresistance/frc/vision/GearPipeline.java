@@ -52,14 +52,14 @@ public class GearPipeline implements VisionPipeline {
 		// Step Blur0:
 		Mat blurInput = resizeImageOutput;
 		BlurType blurType = BlurType.get("Gaussian Blur");
-		double blurRadius = 6.306306306306307;
+		double blurRadius = 5;
 		blur(blurInput, blurType, blurRadius, blurOutput);
 
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = blurOutput;
-		double[] hslThresholdHue = {72.84172661870504, 107.8156996587031};
-		double[] hslThresholdSaturation = {167.40107913669067, 255.0};
-		double[] hslThresholdLuminance = {82.55395683453237, 161.44197952218428};
+		double[] hslThresholdHue = {76, 122};
+		double[] hslThresholdSaturation = {43, 225.0};
+		double[] hslThresholdLuminance = {60, 255};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
 
 		// Step Find_Contours0:

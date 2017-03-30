@@ -94,6 +94,7 @@ public class MecanumDrive {
 			break;	
 		case ROTATE_PID:
 			gyroAngle = gyro.getNormalizedAngle();
+			knobAngle = ((knobAngle % 360) + 360) % 360;
 			error = knobAngle - gyroAngle;
 			if (Math.abs(error) > 180) { // if going around the other way is closer
 				if (error > 0) { // if positive
