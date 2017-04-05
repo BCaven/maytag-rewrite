@@ -106,6 +106,10 @@ public class Teleop {
 				IO.drive.drive(scaledX, scaledY, scaledRotate, 0);
 			}
 		}
+		
+		if (JoystickIO.btnHoldCenter.onButtonReleased()) {
+			NewAutoGearPlacer.getInstance().burst = false;
+		}
 
 		Robot.shooter.update(JoystickIO.btnShooter.isDown(), JoystickIO.btnAgitator.isDown());
 

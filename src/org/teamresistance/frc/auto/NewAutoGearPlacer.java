@@ -30,13 +30,17 @@ public class NewAutoGearPlacer {
 	private Vector2d center = new Vector2d(144,120);
 	private double distanceXCenters = 0.0;
 	
+	private double xGearNormError = 0.0;
+	private double yGearNormError = 0.0;
+	
 	// PID variables
 	private double prevError = 0.0; // The error from the previous loop
 	private double integral = 0.0; // Error integrated over time
 
 	private double errorDeadband = 5.0;
+	private int burstUpdateNum = 0;
 	
-	private double minMoveSpeed = 0.135; //0.2
+	public boolean burst = false;
 	
 	private NewAutoGearPlacer() { }
 	
@@ -61,7 +65,14 @@ public class NewAutoGearPlacer {
 		SmartDashboard.putNumber("kP Gear", 0.0);
 		SmartDashboard.putNumber("kI Gear", 0.0);
 		SmartDashboard.putNumber("kD Gear", 0.0);
-		SmartDashboard.putNumber("Min Move Speed", 0.135);
+		SmartDashboard.putNumber("Speed Range 1", 0.12);
+		SmartDashboard.putNumber("Speed Range 2", 0.17);
+		SmartDashboard.putNumber("Error Left Range", -1.0);
+		SmartDashboard.putNumber("Error Right Range", 1.0);
+		SmartDashboard.putNumber("Y Gear 1 Speed", -0.3);
+		SmartDashboard.putNumber("Burst Speed", -0.4);
+		SmartDashboard.putNumber("Max Burst Num", 5);
+		
 	}
 
 	public Vector2d update() {
@@ -90,10 +101,29 @@ public class NewAutoGearPlacer {
 		if(rects.size() < 2) {
 			return new Vector2d(0.0, 0.0);
 		} 
+		double robotXSpeed = calcRobotXSpeed1();
+		double robotYSpeed = calcRobotYSpeed1();
+		if (!burst) {
+			if (Math.abs(robotXSpeed) > 0) {
+				return new Vector2d(robotXSpeed, 0);
+			} else if (Math.abs(robotYSpeed) > 0) {
+				return new Vector2d(0,robotYSpeed);
+			} else {
+				burst = true;
+				burstUpdateNum = 0;
+				return new Vector2d(0,SmartDashboard.getNumber("Burst Speed", 0.4));
+			}
+		} else {
+			burstUpdateNum++;
+			if (burstUpdateNum <= SmartDashboard.getNumber("Max Burst Num", 5)) {
+				double burstSpeed = SmartDashboard.getNumber("Burst Speed", -0.4);
+				return new Vector2d(0, burstSpeed);
+			} else {
+				return new Vector2d(0,0);
+			}
+		}
 		
-		double robotXSpeed = calcRobotXSpeed();
-		double robotYSpeed = 0;		
-		return new Vector2d(robotXSpeed, robotYSpeed);
+//		return new Vector2d(robotXSpeed, robotYSpeed);
 	}
 	
 	private double calcRobotXSpeed() {
@@ -124,7 +154,7 @@ public class NewAutoGearPlacer {
         	integral = 0;
         }
 		
-		if (onTarget(error)) {
+		if (onXTarget(error)) {
 			error = 0;
 		}
         result = (kP * error) + (kI * integral) + (kD * (error - prevError));
@@ -137,24 +167,63 @@ public class NewAutoGearPlacer {
           result = -1;
         }
 			
-		return xSpeedCorrection(result);
+		return calcRobotXSpeed1();
+		
 	}
 	
-	private double calcRobotYSpeed(double xSpeed) {
-		final double STOP_DISTANCE = 123;
+	private double calcRobotXSpeed1() {
+		final double SETPOINT = 144;
+		SmartDashboard.putData("Center Contours", center);
+		SmartDashboard.putData("Center Image X", new Vector2d(SETPOINT, 123));
+		double error = (center.getX() - SETPOINT);
+		SmartDashboard.putNumber("Raw Image Error", error);
+		error = error / distanceXCenters;
+		SmartDashboard.putNumber("Normalized Image Error", error);
+		SmartDashboard.putNumber("Distance Between Centers", distanceXCenters);
 		
-		double result = 0.0;
+		double speedRange1 = SmartDashboard.getNumber("Speed Range 1", 0.12);
+		double speedRange2 = SmartDashboard.getNumber("Speed Range 2", 0.17);
+		double errorLeft = SmartDashboard.getNumber("Error Left Range", -1.0);
+		double errorRight = SmartDashboard.getNumber("Error Right Range", 1.0);
 		
-		if(center.getY() > STOP_DISTANCE) {
-			result = -0.45;
+		if (onXTarget(error)) {
+			return 0;
+		} else if (error < 0) {
+			if (error > errorLeft) {
+				 return -speedRange1;
+			} else {
+				return -speedRange2;
+			}
+		} else {
+			if (error < errorRight) {
+				return speedRange1;
+			} else {
+				return speedRange2;
+			}
 		}
-		
+	}
+	
+//	private double calcRobotYSpeed(double xSpeed) {
+//		final double STOP_DISTANCE = 133;
+//		double result = 0.0;
+//		
+//		if(center.getY() > STOP_DISTANCE) {
+//			result = -0.45;
+//		}
+//		return result;
+//	}
+	
+	private double calcRobotYSpeed1() {
+		final double STOP_DISTANCE_1 = 140;
+		double result = 0;
+		if (center.getY() > STOP_DISTANCE_1 && !onYTarget(STOP_DISTANCE_1 - center.getY())) {
+			result = SmartDashboard.getNumber("Y Gear 1 Speed", 0.3);
+		}
 		return result;
 	}
 	
 	private double xSpeedCorrection(double in) {
-		minMoveSpeed = SmartDashboard.getNumber("Min Move Speed", 0.135);
-//		double result = (1 - minMoveSpeed) * in;
+		double minMoveSpeed = SmartDashboard.getNumber("Speed Range 1", 0.12);
 		double result = in;
 		if(in == 0.0) {
 			result = 0.0;
@@ -167,7 +236,6 @@ public class NewAutoGearPlacer {
 		} else if(in > 1.0) {
 			result = 1.0;
 		}
-		
 		return result;
 	}
 	
@@ -179,8 +247,12 @@ public class NewAutoGearPlacer {
 		return instance;
 	}
 	
-	private boolean onTarget(double error) {
-		return Math.abs(error) <= errorDeadband / distanceXCenters;
+	private boolean onXTarget(double error) {
+		return Math.abs(error) <= 5.0/distanceXCenters;
+	}
+	
+	private boolean onYTarget(double error) {
+		return Math.abs(error) <= 2.0/distanceXCenters;
 	}
 	
 }

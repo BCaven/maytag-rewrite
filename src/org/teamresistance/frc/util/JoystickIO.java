@@ -20,9 +20,9 @@ public class JoystickIO {
 
 	public static Button btnGyroReset = createButton(rightJoystick, 6);
 
-	public static Button btnHoldLeft = createButton(rightJoystick, 7);
-	public static Button btnHoldCenter = createButton(rightJoystick, 8);
-	public static Button btnHoldRight = createButton(rightJoystick, 10);
+	public static Button btnHoldLeft = createButton(rightJoystick, 4);
+	public static Button btnHoldCenter = createButton(rightJoystick, 3);
+	public static Button btnHoldRight = createButton(rightJoystick, 5);
 	
 	public static Button btnPickupGear = createButton(coJoystick, 2);
 	public static Button btnPlaceGear = createButton(coJoystick, 5);
